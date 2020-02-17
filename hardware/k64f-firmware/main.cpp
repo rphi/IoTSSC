@@ -6,13 +6,15 @@
 #define        NO_DUST_VOLTAGE                 400            //mv
 #define        SYS_VOLTAGE                     5000
 
-Serial pc(USBTX, USBRX);
-RawSerial phone(D1, D0, 9600);
+RawSerial phone(USBTX, USBRX);
+//RawSerial phone(D1, D0, 9600);
 
 AnalogIn   dsensor(A3);
 DigitalOut dsensorLed(D2);
 Adafruit_SGP30 voc_sensor(D14,D15);
-DigitalOut bluetoothModule(D3,0);
+MiCS6814_GasSensor gas_sensor = MiCS6814_GasSensor(D14,D15);
+
+volatile char   c = '\0'; // Initialized to the NULL character
 
 void setup_bluetooth(){
     phone.printf("AT");
@@ -59,11 +61,10 @@ float smoothed_read_dust(){
 }
 
 void send_json_data(){
-    voc_sensor.begin();
-    voc_sensor.IAQinit();
-    MiCS6814_GasSensor gas_sensor = MiCS6814_GasSensor(D14,D15);
-    gas_sensor.initialize();
+    phone.printf("Reading sensors");
+
     float dust = smoothed_read_dust();
+
     voc_sensor.IAQmeasure();
     phone.printf("{\"dust\":%4.2f,\"nh3\":%4.2f,\"co\":%4.2f,\"no2\":%4.2f,\"c3h8\":%4.2f,\"c4h10\":%4.2f,\"ch4\":%4.2f,\"h2\":%4.2f,\"c2h5Oh\":%4.2f,\"voc\":%u,\"eco2\":%u}\r\n",
     dust,
@@ -78,21 +79,35 @@ void send_json_data(){
     voc_sensor.TVOC,
     voc_sensor.eCO2);
 }
-
+ 
+void onCharReceived()
+{
+    c = phone.getc();
+}
+ 
 int main()
-{   
-    //setup_bluetooth();
-    ThisThread::sleep_for(2000);
-    bluetoothModule.write(1);
+{
     voc_sensor.begin();
     voc_sensor.IAQinit();
-    MiCS6814_GasSensor gas_sensor = MiCS6814_GasSensor(D14,D15);
     gas_sensor.initialize();
-    float data[3];
+
     //GAS_TYPE gases[] = [GAS_TYPE::NH3, GAS_TYPE::CO, GAS_TYPE::NO2, GAS_TYPE::C3H8, GAS_TYPE::C4H10, GAS_TYPE::CH4, GAS_TYPE::H2, GAS_TYPE::C2H5OH]
     //str gas_names[] = ["NH3"]
-    
-    while(1){
-        send_json_data();
+
+    phone.attach(&onCharReceived);
+ 
+    while (true)
+    {
+        if (c == 'r')
+        {
+            c = '\0';  // To avoid execution of this block until a '1' is received again.
+            send_json_data();
+        }
+ 
+        if (c == '?')
+        {
+            c = '\0';  // To avoid execution of this block until a '0' is received again.
+            phone.printf("Hi, I'm the AirSense hardware device.\r\n");
+        }
     }
 }

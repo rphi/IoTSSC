@@ -1,9 +1,8 @@
 .build
 .mbed
-projectfiles
+projectfiles/
 *.py*
-mbed-os
-BUILD
-
-MiCS6814_GasSensor
-Adafruit_SGP30_mbed
+mbed-os/
+BUILD/
+MiCS6814_GasSensor/
+Adafruit_SGP30_mbed/
