@@ -51,7 +51,7 @@ import com.example.iotssc_app.TrackerActivity;
 public class MainActivity extends AppCompatActivity {
 
     // Activity Tags
-    private static final int REQUEST_ACCESS_COARSE_LOCATION = 1022; // random number
+    private static final int REQUEST_ACCESS_FINE_LOCATION = 1022; // random number
     private static final String TAG = "MainActivityTag";
 
     // Application Scope
@@ -377,7 +377,7 @@ public class MainActivity extends AppCompatActivity {
                                            @NonNull final int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case REQUEST_ACCESS_COARSE_LOCATION:
+            case REQUEST_ACCESS_FINE_LOCATION:
                 break;
         }
     }
@@ -411,8 +411,8 @@ public class MainActivity extends AppCompatActivity {
         Utils.markLocationPermissionRequested(this);
         ActivityCompat.requestPermissions(
                 this,
-                new String[] { Manifest.permission.ACCESS_COARSE_LOCATION },
-                REQUEST_ACCESS_COARSE_LOCATION);
+                new String[] { Manifest.permission.ACCESS_FINE_LOCATION },
+                REQUEST_ACCESS_FINE_LOCATION);
     }
     /**
      * A callback for accessing the phone settings when this is clicked on the location permission
