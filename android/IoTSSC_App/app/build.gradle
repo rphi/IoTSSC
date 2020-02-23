@@ -23,6 +23,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
 }
 
 dependencies {
@@ -47,4 +51,12 @@ dependencies {
     // Material Theme
     implementation 'com.google.android.material:material:1.1.0-alpha03'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    // Work manager dependencies
+    def work_version = "2.3.2"
+    // Kotlin + coroutines
+    implementation "androidx.work:work-runtime-ktx:$work_version"
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
+
+
 }

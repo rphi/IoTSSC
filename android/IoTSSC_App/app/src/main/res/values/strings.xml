@@ -40,6 +40,7 @@
     <string name="type_a_text_message_to_send_to_your_device">Type a text message to send to your device.</string>
 
     <string name="initialise_the_bluetooth_adapter">Hehehehe... You will need to initialise the Bluetooth Adapter first!</string>
+    <string name="bluetooth_settings_file">btooth_settings</string>
 
 
 </resources>

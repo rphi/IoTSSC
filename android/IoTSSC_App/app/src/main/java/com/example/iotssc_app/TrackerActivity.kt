@@ -27,6 +27,8 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 
 import com.example.iotssc_app.adapter.BluetoothReceiver
 import com.example.iotssc_app.adapter.DiscoveredBluetoothDevice
@@ -41,8 +43,10 @@ import java.util.ArrayList
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.example.iotssc_app.utils.DataLogger
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 
 class TrackerActivity : AppCompatActivity() {
 
@@ -75,6 +79,13 @@ class TrackerActivity : AppCompatActivity() {
         deviceInterface.sendMessage("s")
 
         Log.d("tac","ready")
+        val dataLoggerWorkRequest = PeriodicWorkRequestBuilder<DataLogger>(15, TimeUnit.MINUTES)
+                //.setConstraints(constraints)
+                .build()
+        WorkManager.getInstance(applicationContext).enqueue(dataLoggerWorkRequest)
+
+
+
     }
 
     fun onMessageRecieved(message: String){
