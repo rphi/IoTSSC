@@ -1,13 +1,12 @@
-import * as firebase from 'firebase/app';
 import 'firebase/firestore';
-const admin = require('firebase-admin');
-const functions = require('firebase-functions');
+import * as admin from 'firebase-admin';
+import * as functions from 'firebase-functions';
 import { GeoCollectionReference, GeoFirestore, GeoQuery, GeoQuerySnapshot } from 'geofirestore';
 
 
 admin.initializeApp(functions.config().firebase);
 
-let db = admin.firestore();
+const db = admin.firestore();
 
 // Create a GeoFirestore reference
 const geofirestore: GeoFirestore = new GeoFirestore(db);
@@ -15,7 +14,7 @@ const geofirestore: GeoFirestore = new GeoFirestore(db);
 // Create a GeoCollection reference
 const geocollection: GeoCollectionReference = geofirestore.collection('georeadings');
 
-const express = require('express');
+import * as express from 'express';
 const app = express();
 
 // Express middleware that validates Firebase ID Tokens passed in the Authorization HTTP header.
@@ -41,27 +40,8 @@ const authenticate = async (req, res, next) => {
 
 app.use(authenticate);
 
-app.post('/api/georeading', async (req, res) => {
-  const loc = req.body.location;
-  const airquality = req.body.quality;
-  const time = new Date(req.body.timestamp);
-  const user = req.body.user;
-
-  try {
-    // Add a GeoDocument to a GeoCollection
-    geocollection.add({
-      user: user,
-      airquality: airquality,
-      time: time,
-      // The coordinates field must be a GeoPoint!
-      coordinates: new firebase.firestore.GeoPoint(loc[0], loc[1])
-    })
-
-    res.status(201);
-  } catch(error) {
-    console.log('Error writing data to geofirestore', error.message);
-    res.sendStatus(500);
-  }
+app.get('/', async (req, res) => {
+  res.send("Hi there");
 });
 
 // Expose the API as a function
