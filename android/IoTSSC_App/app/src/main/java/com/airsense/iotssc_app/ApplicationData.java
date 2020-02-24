@@ -1,10 +1,10 @@
-package com.example.iotssc_app;
+package com.airsense.iotssc_app;
 
 import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 
-import com.example.iotssc_app.adapter.BluetoothReceiver;
-import com.example.iotssc_app.adapter.DiscoveredBluetoothDevice;
+import com.airsense.iotssc_app.adapter.BluetoothReceiver;
+import com.airsense.iotssc_app.adapter.DiscoveredBluetoothDevice;
 import com.harrysoft.androidbluetoothserial.BluetoothManager;
 import com.harrysoft.androidbluetoothserial.SimpleBluetoothDeviceInterface;
 

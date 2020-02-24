@@ -1,4 +1,4 @@
-package com.example.iotssc_app.utils
+package com.airsense.iotssc_app.utils
 
 import android.content.Context
 import android.location.Location

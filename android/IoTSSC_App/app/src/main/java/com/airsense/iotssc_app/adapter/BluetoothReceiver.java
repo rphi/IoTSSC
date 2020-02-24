@@ -1,4 +1,4 @@
-package com.example.iotssc_app.adapter;
+package com.airsense.iotssc_app.adapter;
 
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;

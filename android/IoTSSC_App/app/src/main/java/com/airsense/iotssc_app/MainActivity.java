@@ -1,4 +1,4 @@
-package com.example.iotssc_app;
+package com.airsense.iotssc_app;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,15 +24,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.iotssc_app.adapter.BluetoothReceiver;
-import com.example.iotssc_app.adapter.DiscoveredBluetoothDevice;
-import com.example.iotssc_app.adapter.ScannerDevicesAdapter;
-import com.example.iotssc_app.utils.Utils;
+import com.airsense.iotssc_app.adapter.BluetoothReceiver;
+import com.airsense.iotssc_app.adapter.DiscoveredBluetoothDevice;
+import com.airsense.iotssc_app.adapter.ScannerDevicesAdapter;
+import com.airsense.iotssc_app.utils.Utils;
 import com.harrysoft.androidbluetoothserial.BluetoothManager;
 import com.harrysoft.androidbluetoothserial.BluetoothSerialDevice;
 import com.harrysoft.androidbluetoothserial.SimpleBluetoothDeviceInterface;
@@ -45,8 +44,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-
-import com.example.iotssc_app.TrackerActivity;
 
 public class MainActivity extends AppCompatActivity {
 

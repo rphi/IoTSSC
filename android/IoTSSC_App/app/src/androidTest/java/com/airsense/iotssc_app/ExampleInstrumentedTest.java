@@ -1,4 +1,4 @@
-package com.example.iotssc_app;
+package com.airsense.iotssc_app;
 
 import android.content.Context;
 

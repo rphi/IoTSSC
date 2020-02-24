@@ -20,7 +20,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.example.iotssc_app;
+package com.airsense.iotssc_app;
 
 import android.app.Activity;
 import android.content.Intent;

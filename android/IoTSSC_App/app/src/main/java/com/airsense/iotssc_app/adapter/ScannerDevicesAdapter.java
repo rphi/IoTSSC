@@ -20,7 +20,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.example.iotssc_app.adapter;
+package com.airsense.iotssc_app.adapter;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
@@ -30,13 +30,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.iotssc_app.MainActivity;
-import com.example.iotssc_app.R;
+import com.airsense.iotssc_app.MainActivity;
+import com.airsense.iotssc_app.R;
 
 import java.util.List;
 
