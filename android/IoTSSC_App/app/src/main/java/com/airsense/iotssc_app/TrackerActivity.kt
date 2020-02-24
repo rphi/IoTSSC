@@ -67,7 +67,7 @@ class TrackerActivity : AppCompatActivity() {
     }
 
     fun requestUpdate() {
-        deviceInterface.sendMessage("s")
+        deviceInterface.sendMessage("r")
     }
 
     fun onMessageSent(message: String){

@@ -6,8 +6,8 @@
 #define        NO_DUST_VOLTAGE                 400            //mv
 #define        SYS_VOLTAGE                     5000
 
-RawSerial phone(USBTX, USBRX);
-//RawSerial phone(D1, D0, 9600);
+Serial pc(USBTX, USBRX, 9600);
+RawSerial phone(D1, D0, 9600);
 
 AnalogIn   dsensor(A3);
 DigitalOut dsensorLed(D2);
@@ -87,6 +87,9 @@ void onCharReceived()
  
 int main()
 {
+    //setup_bluetooth();
+    printf("boot");
+
     voc_sensor.begin();
     voc_sensor.IAQinit();
     gas_sensor.initialize();
@@ -94,18 +97,21 @@ int main()
     //GAS_TYPE gases[] = [GAS_TYPE::NH3, GAS_TYPE::CO, GAS_TYPE::NO2, GAS_TYPE::C3H8, GAS_TYPE::C4H10, GAS_TYPE::CH4, GAS_TYPE::H2, GAS_TYPE::C2H5OH]
     //str gas_names[] = ["NH3"]
 
+    printf("starting to listen");
     phone.attach(&onCharReceived);
  
     while (true)
     {
         if (c == 'r')
         {
+            printf("got r");
             c = '\0';  // To avoid execution of this block until a '1' is received again.
             send_json_data();
         }
  
         if (c == '?')
         {
+            printf("got ?");
             c = '\0';  // To avoid execution of this block until a '0' is received again.
             phone.printf("Hi, I'm the AirSense hardware device.\r\n");
         }
