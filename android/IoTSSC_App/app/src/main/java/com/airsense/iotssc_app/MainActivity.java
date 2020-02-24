@@ -1,6 +1,7 @@
 package com.airsense.iotssc_app;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -14,6 +15,7 @@ import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
@@ -33,11 +35,16 @@ import com.airsense.iotssc_app.adapter.BluetoothReceiver;
 import com.airsense.iotssc_app.adapter.DiscoveredBluetoothDevice;
 import com.airsense.iotssc_app.adapter.ScannerDevicesAdapter;
 import com.airsense.iotssc_app.utils.Utils;
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.IdpResponse;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.harrysoft.androidbluetoothserial.BluetoothManager;
 import com.harrysoft.androidbluetoothserial.BluetoothSerialDevice;
 import com.harrysoft.androidbluetoothserial.SimpleBluetoothDeviceInterface;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -51,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     // Activity Tags
     private static final int REQUEST_ACCESS_FINE_LOCATION = 1022; // random number
     private static final String TAG = "MainActivityTag";
+    private static final int RC_SIGN_IN = 137;
 
     // Application Scope
     private ApplicationData app;
@@ -66,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothAdapter bluetoothAdapter;
     private Boolean hasBluetoothScanStarted = false;
 
+    private FirebaseAuth mAuth;
 
     // Permissions Views
     @BindView(R.id.no_devices)View mEmptyView;
@@ -121,13 +130,66 @@ public class MainActivity extends AppCompatActivity {
         adapter = new ScannerDevicesAdapter(this, bluetoothReceiver.getDiscoveredBluetoothDevices());
         recyclerView.setAdapter(adapter);
 
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+
 
         // initialise select device button functionality
         selectDeviceButton();
 
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            // Choose authentication providers
+            List<AuthUI.IdpConfig> providers = Arrays.asList(
+                    new AuthUI.IdpConfig.EmailBuilder().build(),
+                    new AuthUI.IdpConfig.PhoneBuilder().build(),
+                    new AuthUI.IdpConfig.GoogleBuilder().build());
 
+// Create and launch sign-in intent
+            startActivityForResult(
+                    AuthUI.getInstance()
+                            .createSignInIntentBuilder()
+                            .setAvailableProviders(providers)
+                            .build(),
+                    RC_SIGN_IN);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_SIGN_IN) {
+            IdpResponse response = IdpResponse.fromResultIntent(data);
+
+            if (resultCode == RESULT_OK) {
+                // Successfully signed in
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            } else {
+                new AlertDialog.Builder(context)
+                        .setTitle("Login failed")
+                        .setMessage("Unable to login to Firebase.")
+
+                        // Specifying a listener allows you to take an action before dismissing the dialog.
+                        // The dialog is automatically dismissed when a dialog button is clicked.
+                        .setPositiveButton("Quit app", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // die
+                                finishAffinity();
+                                System.exit(0);
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+            }
+        }
+    }
 
     /* Bluetooth scanning and options menu instantiation */
 

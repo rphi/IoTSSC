@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "927998709219",
+    "firebase_url": "https://iotssc-aqm.firebaseio.com",
+    "project_id": "iotssc-aqm",
+    "storage_bucket": "iotssc-aqm.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:927998709219:android:6673547e2ceb5b0ead64d6",
+        "android_client_info": {
+          "package_name": "com.airsense.iotssc_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "927998709219-k1jroi12u7im3ji6tkm8vllr7bl4vlbi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.airsense.iotssc_app",
+            "certificate_hash": "80191164b15bfd65af2eb4b0f1fbd3c16417d294"
+          }
+        },
+        {
+          "client_id": "927998709219-9hp9e829m2e09q3p6opl4knifrssd0e7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9iT5pwTBiIRdL66Xpqt507ECtibrn07g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "927998709219-9hp9e829m2e09q3p6opl4knifrssd0e7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
