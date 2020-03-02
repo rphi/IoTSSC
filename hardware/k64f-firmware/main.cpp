@@ -6,7 +6,7 @@
 #define        NO_DUST_VOLTAGE                 400            //mv
 #define        SYS_VOLTAGE                     5000
 
-Serial pc(USBTX, USBRX, 9600);
+//RawSerial phone(USBTX, USBRX, 9600);
 RawSerial phone(D1, D0, 9600);
 
 AnalogIn   dsensor(A3);
@@ -61,12 +61,12 @@ float smoothed_read_dust(){
 }
 
 void send_json_data(){
-    phone.printf("Reading sensors");
+    phone.printf("{\"status\":\"reading\"}\n");
 
     float dust = smoothed_read_dust();
 
     voc_sensor.IAQmeasure();
-    phone.printf("{\"dust\":%4.2f,\"nh3\":%4.2f,\"co\":%4.2f,\"no2\":%4.2f,\"c3h8\":%4.2f,\"c4h10\":%4.2f,\"ch4\":%4.2f,\"h2\":%4.2f,\"c2h5Oh\":%4.2f,\"voc\":%u,\"eco2\":%u}\r\n",
+    phone.printf("{\"status\":\"values\",\"dust\":%4.2f,\"nh3\":%4.2f,\"co\":%4.2f,\"no2\":%4.2f,\"c3h8\":%4.2f,\"c4h10\":%4.2f,\"ch4\":%4.2f,\"h2\":%4.2f,\"c2h5oh\":%4.2f,\"voc\":%u,\"eco2\":%u}\r\n",
     dust,
     gas_sensor.getGas(GAS_TYPE::NH3),
     gas_sensor.getGas(GAS_TYPE::CO),
@@ -87,7 +87,7 @@ void onCharReceived()
  
 int main()
 {
-    //setup_bluetooth();
+    setup_bluetooth();
     printf("boot");
 
     voc_sensor.begin();
