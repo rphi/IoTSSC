@@ -35,6 +35,7 @@ import android.widget.Toast;
 import com.airsense.iotssc_app.adapter.BluetoothReceiver;
 import com.airsense.iotssc_app.adapter.DiscoveredBluetoothDevice;
 import com.airsense.iotssc_app.adapter.ScannerDevicesAdapter;
+import com.airsense.iotssc_app.utils.DataLogger;
 import com.airsense.iotssc_app.utils.Utils;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
@@ -47,7 +48,10 @@ import com.harrysoft.androidbluetoothserial.SimpleBluetoothDeviceInterface;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -377,7 +381,10 @@ public class MainActivity extends AppCompatActivity {
                     selectDeviceButton.setVisibility(View.GONE);
                     bluetoothScanningProgressBar.setVisibility(View.VISIBLE);
 
-                    connectDevice(deviceForConnection.getMacAddress());
+                    //connectDevice(deviceForConnection.getMacAddress());
+
+                    PeriodicWorkRequest pwr = new PeriodicWorkRequest.Builder(DataLogger.class, 15, TimeUnit.MINUTES).build();
+                    WorkManager.getInstance(context).enqueue(pwr);
                 } else {
                     Toast toast = Toast.makeText(getApplicationContext(),
                             "Please choose a (single) device",
@@ -535,6 +542,8 @@ public class MainActivity extends AppCompatActivity {
         app.setBluetoothAdapter(bluetoothAdapter);
         app.setBluetoothManager(bluetoothManager);
         app.setBluetoothReceiver(bluetoothReceiver);
+
+
 
         Intent intent = new Intent(this, TrackerActivity.class);
         startActivity(intent);
