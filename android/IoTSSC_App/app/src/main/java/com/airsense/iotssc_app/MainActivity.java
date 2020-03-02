@@ -18,6 +18,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -501,6 +502,11 @@ public class MainActivity extends AppCompatActivity {
      * @param mac mac address of the devices
      */
     private void connectDevice(String mac) {
+
+        SharedPreferences sharedPref = this.getSharedPreferences(context.getString(R.string.bluetooth_settings_file), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("UUID", mac);
+        editor.commit();
         bluetoothManager.openSerialDevice(mac)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
