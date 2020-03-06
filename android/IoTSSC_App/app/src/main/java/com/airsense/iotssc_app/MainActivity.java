@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -36,6 +37,7 @@ import com.airsense.iotssc_app.adapter.BluetoothReceiver;
 import com.airsense.iotssc_app.adapter.DiscoveredBluetoothDevice;
 import com.airsense.iotssc_app.adapter.ScannerDevicesAdapter;
 import com.airsense.iotssc_app.utils.DataLogger;
+import com.airsense.iotssc_app.utils.DataLoggerService;
 import com.airsense.iotssc_app.utils.Utils;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
@@ -381,10 +383,10 @@ public class MainActivity extends AppCompatActivity {
                     selectDeviceButton.setVisibility(View.GONE);
                     bluetoothScanningProgressBar.setVisibility(View.VISIBLE);
 
-                    //connectDevice(deviceForConnection.getMacAddress());
+                    connectDevice(deviceForConnection.getMacAddress());
 
-                    PeriodicWorkRequest pwr = new PeriodicWorkRequest.Builder(DataLogger.class, 15, TimeUnit.MINUTES).build();
-                    WorkManager.getInstance(context).enqueue(pwr);
+                    //PeriodicWorkRequest pwr = new PeriodicWorkRequest.Builder(DataLogger.class, 15, TimeUnit.MINUTES).build();
+                    //WorkManager.getInstance(context).enqueue(pwr);
                 } else {
                     Toast toast = Toast.makeText(getApplicationContext(),
                             "Please choose a (single) device",
@@ -514,10 +516,13 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("UUID", mac);
         editor.commit();
-        bluetoothManager.openSerialDevice(mac)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onConnected, this::onError);
+        Intent intent = new Intent(this, DataLoggerService.class);
+        startService(intent);
+
+        //bluetoothManager.openSerialDevice(mac)
+        //        .subscribeOn(Schedulers.io())
+        //        .observeOn(AndroidSchedulers.mainThread())
+        //        .subscribe(this::onConnected, this::onError);
     }
 
 
@@ -533,15 +538,14 @@ public class MainActivity extends AppCompatActivity {
         activityTitleTextView.setText("Connected");
         bluetoothScanningProgressBar.setVisibility(View.INVISIBLE);
 
-
-        // You are now connected to this device!
-        // Here you may want to retain an instance to your device:
-        deviceInterface = connectedDevice.toSimpleDeviceInterface();
-
         app.setDeviceInterface(deviceInterface);
         app.setBluetoothAdapter(bluetoothAdapter);
         app.setBluetoothManager(bluetoothManager);
         app.setBluetoothReceiver(bluetoothReceiver);
+
+        // You are now connected to this device!
+        // Here you may want to retain an instance to your device:
+        deviceInterface = connectedDevice.toSimpleDeviceInterface();
 
 
 

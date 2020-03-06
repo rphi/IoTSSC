@@ -40,14 +40,13 @@ class TrackerActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        app = applicationContext as ApplicationData
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_tracker)
+        /*app = applicationContext as ApplicationData
         bluetoothManager = app.bluetoothManager
         deviceInterface = app.deviceInterface
         bluetoothReceiver = app.bluetoothReceiver
         bluetoothAdapter = app.bluetoothAdapter
-
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_tracker)
 
         findViewById<Button>(R.id.button).setOnClickListener{
             Log.d("tac","button pressed")
@@ -65,7 +64,7 @@ class TrackerActivity : AppCompatActivity() {
         WorkManager.getInstance(applicationContext).enqueue(dataLoggerWorkRequest)
 
         functions = FirebaseFunctions.getInstance()
-        firestore = FirebaseFirestore.getInstance()
+        firestore = FirebaseFirestore.getInstance()*/
     }
 
     data class SerialMessage(
