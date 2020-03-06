@@ -40,7 +40,9 @@ class DataLoggerService : Service() {
     private lateinit var bluetoothReceiver: BluetoothReceiver
     private lateinit var bluetoothAdapter: BluetoothAdapter
     private lateinit var functions: FirebaseFunctions
-    private val timer = Timer();
+    private val timer = Timer()
+    private lateinit var updateTask: TimerTask
+    private lateinit var reconnectTask: TimerTask
 
     private lateinit var firestore: FirebaseFirestore
 
@@ -63,6 +65,19 @@ class DataLoggerService : Service() {
         startForeground(1, notification)
 
 
+        initialiseConnection()
+
+        Log.d("tac","ready")
+
+        functions = FirebaseFunctions.getInstance()
+        firestore = FirebaseFirestore.getInstance()
+
+
+        //stopSelf();
+        return START_NOT_STICKY
+    }
+
+    private fun initialiseConnection(){
         val ctx = applicationContext
         val prefs = ctx.getSharedPreferences(
                 ctx.getString(R.string.bluetooth_settings_file), Context.MODE_PRIVATE)
@@ -75,28 +90,34 @@ class DataLoggerService : Service() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ connectedDevice: BluetoothSerialDevice? ->
+
                     deviceInterface = connectedDevice!!.toSimpleDeviceInterface()
                     deviceInterface.setListeners(this::onMessageRecieved, this::onMessageSent, this::onError)
 
                     val delay: Long = 0 // delay for 0 sec.
                     val period: Long = 60_000 // repeat every 60 sec.
-                    timer.scheduleAtFixedRate(object : TimerTask() {
+
+                    updateTask = object : TimerTask() {
                         override fun run() {
                             Log.d("tac","pre send")
                             requestUpdate()
                             Log.d("tac","post send")
                         }
-                    }, delay, period)
-                }, { error: Throwable? -> Log.e("tac", error.toString()) })
-
-        Log.d("tac","ready")
-
-        functions = FirebaseFunctions.getInstance()
-        firestore = FirebaseFirestore.getInstance()
-
-
-        //stopSelf();
-        return START_NOT_STICKY
+                    }
+                    timer.scheduleAtFixedRate(updateTask, delay, period)
+                }, { error: Throwable? ->
+                    run {
+                        Log.e("tac", error.toString())
+                        reconnectTask = object : TimerTask() {
+                            override fun run() {
+                                Log.d("tac","pre send")
+                                requestUpdate()
+                                Log.d("tac","post send")
+                            }
+                        }
+                        timer.schedule(reconnectTask, 30_000)
+                    }
+                })
     }
 
     override fun onBind(intent: Intent): IBinder? {
@@ -230,15 +251,19 @@ class DataLoggerService : Service() {
 
     fun requestUpdate() {
         deviceInterface.sendMessage("r")
+        updateNotification("requested update")
     }
 
     fun onMessageSent(message: String){
-        updateNotification("Msg sent")
+        Log.i("sent message", message)
     }
 
     fun onError(error: Throwable){
+        Log.e("bluetooth error", error.toString())
         updateNotification("LOL no it ded")
-
+        updateTask.cancel()
+        timer.purge()
+        initialiseConnection()
     }
 
 }
