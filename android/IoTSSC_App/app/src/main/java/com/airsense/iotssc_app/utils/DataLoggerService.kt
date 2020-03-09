@@ -26,6 +26,7 @@ import io.reactivex.schedulers.Schedulers
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.math.max
 
 class DataLoggerService : Service() {
     private val CHANNEL_ID = "ForegroundService Kotlin"
@@ -182,6 +183,45 @@ class DataLoggerService : Service() {
             val eco2: Float? = null
     )
 
+    fun interpolateBetweenBreaks(value: Float?, g_point: Float, m_point: Float, us_point: Float, u_point: Float, vu_point: Float, h_point: Float, eh_point: Float):Float?{
+        if (value == null) {
+            return null
+        }
+        when {
+            value <= g_point -> {
+                return 50 * (value/g_point)
+            }
+            value <= m_point -> {
+                return 50 + 50 * ((value-g_point)/(m_point-g_point))
+            }
+            value <= us_point -> {
+                return 100 + 50 * ((value-m_point)/(m_point-g_point))
+            }
+            value <= u_point -> {
+                return 150 + 50 * ((value-us_point)/(m_point-g_point))
+            }
+            value <= vu_point -> {
+                return 200 + 100 * ((value-u_point)/(m_point-g_point))
+            }
+            value <= h_point -> {
+                return 300 + 100 * ((value-vu_point)/(m_point-g_point))
+            }
+            value <= eh_point -> {
+                return 400 + 100 * ((value-h_point)/(m_point-g_point))
+            }
+            else -> {
+                return 500f
+            }
+        }
+    }
+
+    fun messageToAQI(message: SerialMessage): Float? {
+        val co = interpolateBetweenBreaks(message.co,4.4f, 9.4f, 12.4f, 15.4f, 30.4f, 40.4f, 50.4f)
+        val no2 = interpolateBetweenBreaks(message.no2, 53f,100f,360f,649f,1249f,1649f,2049f)
+        return max(co!!, no2!!)
+    }
+
+
     fun onMessageRecieved(message: String){
         Log.d("bluetooth received", message)
         val response = Gson().fromJson(message, SerialMessage::class.java);
@@ -213,6 +253,7 @@ class DataLoggerService : Service() {
                             "lat" to location.latitude,
                             "long" to location.longitude
                     )
+                    doc["aqi"] = messageToAQI(response)
 
                     firestore.collection("readings").add(doc)
 
