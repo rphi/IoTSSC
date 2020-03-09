@@ -2,8 +2,14 @@ import 'firebase/firestore';
 import * as firebase from 'firebase/app';
 import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
+<<<<<<< HEAD
 import {GeoCollectionReference, GeoFirestore, GeoQuery, GeoQuerySnapshot} from 'geofirestore';
 
+=======
+import * as GeoJSON from 'geojson';
+import { GeoCollectionReference, GeoFirestore, GeoQuery, GeoQuerySnapshot } from 'geofirestore';
+import * as express from 'express';
+>>>>>>> Add query for geojson
 
 admin.initializeApp(functions.config().firebase);
 
@@ -15,8 +21,11 @@ const geofirestore: GeoFirestore = new GeoFirestore(db);
 // Create a GeoCollection reference
 const geocollection: GeoCollectionReference = geofirestore.collection('georeadings');
 
+<<<<<<< HEAD
 import * as express from 'express';
 
+=======
+>>>>>>> Add query for geojson
 const app = express();
 
 // Express middleware that validates Firebase ID Tokens passed in the Authorization HTTP header.
@@ -40,14 +49,55 @@ const authenticate = async (req, res, next) => {
     }
 };
 
-app.use(authenticate);
+//app.use(authenticate);
 
 app.get('/', async (req, res) => {
     res.send("Hi there");
 });
 
+app.get('/points', async (req, res) => {
+  let lat = Number(req.query.lat);
+  let long = Number(req.query.long);
+  let radius = Number(req.query.radius);
+  let limit = Number(req.query.limit);
+
+  res.set('Access-Control-Allow-Origin', '*');
+
+  // Create a GeoQuery based on a location
+  const query: GeoQuery = geocollection.near({ center: new admin.firestore.GeoPoint(lat, long), radius: radius }).limit(limit);
+  query.get().then((value: GeoQuerySnapshot) => {
+    // All GeoDocument returned by GeoQuery, like the GeoDocument added above
+    var reads = [];
+    value.docs.forEach(doc => {
+      let data = doc.data();
+      console.log(data);
+      reads.push({
+        name: data.name,
+        score: data.score,
+        lat: data.coordinates._latitude,
+        long: data.coordinates._longitude
+      })
+    });
+    let gjson = GeoJSON.parse(reads, {Point: ['lat', 'long']});
+    res.send(gjson);
+  }).catch((reason) => {
+    res.send(`Error: ${reason}`)
+  });
+});
+
+app.get('/add', async (req, res) => {
+  // Add a GeoDocument to a GeoCollection
+  geocollection.add({
+    name: 'Geofirestore',
+    score: 100,
+    coordinates: new admin.firestore.GeoPoint(40.7589, -73.9851)
+  });
+  res.send("done");
+});
+
 // Expose the API as a function
 exports.api = functions.https.onRequest(app);
+<<<<<<< HEAD
 
 function limit_precision(value) {
   let inflated_value = value * 2 * 1000;
@@ -112,3 +162,5 @@ exports.updateReading = functions.firestore
         db.doc('heatmap').set({ ... });
         */
     });
+=======
+>>>>>>> Add query for geojson
