@@ -97,7 +97,7 @@ function limit_precision(value) {
 }
 
 function calculateAQI(latestReading, oldValue) {
-    return 7
+    return latestReading.aqi
 }
 
 exports.updateReading = functions.firestore
