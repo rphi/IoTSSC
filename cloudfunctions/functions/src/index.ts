@@ -2,14 +2,10 @@ import 'firebase/firestore';
 import * as firebase from 'firebase/app';
 import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
-<<<<<<< HEAD
-import {GeoCollectionReference, GeoFirestore, GeoQuery, GeoQuerySnapshot} from 'geofirestore';
 
-=======
 import * as GeoJSON from 'geojson';
 import { GeoCollectionReference, GeoFirestore, GeoQuery, GeoQuerySnapshot } from 'geofirestore';
 import * as express from 'express';
->>>>>>> Add query for geojson
 
 admin.initializeApp(functions.config().firebase);
 
@@ -21,11 +17,8 @@ const geofirestore: GeoFirestore = new GeoFirestore(db);
 // Create a GeoCollection reference
 const geocollection: GeoCollectionReference = geofirestore.collection('georeadings');
 
-<<<<<<< HEAD
 import * as express from 'express';
 
-=======
->>>>>>> Add query for geojson
 const app = express();
 
 // Express middleware that validates Firebase ID Tokens passed in the Authorization HTTP header.
@@ -97,7 +90,6 @@ app.get('/add', async (req, res) => {
 
 // Expose the API as a function
 exports.api = functions.https.onRequest(app);
-<<<<<<< HEAD
 
 function limit_precision(value) {
   let inflated_value = value * 2 * 1000;
@@ -162,5 +154,3 @@ exports.updateReading = functions.firestore
         db.doc('heatmap').set({ ... });
         */
     });
-=======
->>>>>>> Add query for geojson
