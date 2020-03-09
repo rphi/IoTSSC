@@ -5,7 +5,6 @@ import * as functions from 'firebase-functions';
 
 import * as GeoJSON from 'geojson';
 import { GeoCollectionReference, GeoFirestore, GeoQuery, GeoQuerySnapshot } from 'geofirestore';
-import * as express from 'express';
 
 admin.initializeApp(functions.config().firebase);
 
@@ -78,15 +77,6 @@ app.get('/points', async (req, res) => {
   });
 });
 
-app.get('/add', async (req, res) => {
-  // Add a GeoDocument to a GeoCollection
-  geocollection.add({
-    name: 'Geofirestore',
-    score: 100,
-    coordinates: new admin.firestore.GeoPoint(40.7589, -73.9851)
-  });
-  res.send("done");
-});
 
 // Expose the API as a function
 exports.api = functions.https.onRequest(app);
