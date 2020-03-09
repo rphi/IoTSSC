@@ -61,7 +61,7 @@ class Sensor {
     
             if (c == '?')
             {
-                pc.printf("got ?\nn");
+                pc.printf("got ?\n");
                 c = '\0';  // To avoid execution of this block until a '0' is received again.
                 phone.printf("Hi, I'm the AirSense hardware device.\r\n");
             }
@@ -130,7 +130,7 @@ class Sensor {
 
 int main()
 {   
-    ThisThread::sleep_for(1000);
+    ThisThread::sleep_for(2000);
 
     pc.printf("boot... \n");
 
