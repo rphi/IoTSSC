@@ -43,8 +43,8 @@
                     property: 'score',
                     type: 'exponential',
                     stops: [
-                      [1, 1],
-                      [62, 1]
+                      [0, 0],
+                      [40, 1]
                     ]
                   },
                   // increase intensity as zoom level increases
@@ -58,10 +58,10 @@
                   'heatmap-color': [
                     'interpolate',
                     ['linear'],
-                    ['heatmap-weight'],
+                    ['heatmap-density'],
                     0, 'rgba(0, 0, 0, 0.35)',
-                    1, 'rgba(85, 211, 0, 0.50)',
-                    10, 'rgba(255, 47, 47, 0.90)'
+                    1, 'rgba(211,0,8,0.73)',
+                    //10, 'rgba(255, 47, 47, 0.90)'
                   ],
                   // increase radius as zoom increases
                   'heatmap-radius': {
