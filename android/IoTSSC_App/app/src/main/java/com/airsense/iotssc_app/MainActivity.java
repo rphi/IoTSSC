@@ -519,6 +519,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DataLoggerService.class);
         startService(intent);
 
+        Intent activityIntent = new Intent(this, TrackerActivity.class);
+        startActivity(activityIntent);
+
         //bluetoothManager.openSerialDevice(mac)
         //        .subscribeOn(Schedulers.io())
         //        .observeOn(AndroidSchedulers.mainThread())

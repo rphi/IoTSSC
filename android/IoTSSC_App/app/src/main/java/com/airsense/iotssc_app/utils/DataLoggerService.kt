@@ -23,6 +23,7 @@ import com.harrysoft.androidbluetoothserial.BluetoothSerialDevice
 import com.harrysoft.androidbluetoothserial.SimpleBluetoothDeviceInterface
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import java.lang.Error
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -291,8 +292,12 @@ class DataLoggerService : Service() {
     }
 
     fun requestUpdate() {
-        deviceInterface.sendMessage("r")
-        updateNotification("requested update")
+        if (::deviceInterface.isInitialized) {
+            deviceInterface.sendMessage("r")
+            updateNotification("requested update")
+        } else {
+            onError(Error("device not initialized"))
+        }
     }
 
     fun onMessageSent(message: String){
@@ -302,7 +307,9 @@ class DataLoggerService : Service() {
     fun onError(error: Throwable){
         Log.e("bluetooth error", error.toString())
         updateNotification("LOL no it ded")
-        updateTask.cancel()
+        if (::updateTask.isInitialized) {
+            updateTask.cancel()
+        }
         timer.purge()
         initialiseConnection()
     }

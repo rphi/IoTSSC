@@ -96,7 +96,7 @@ function calculateAQI(latestReading, oldValue) {
 
 function notify_subscribers(point: admin.firestore.GeoPoint, newValue){
   //get all subscribers in 100m with a lower threshold than recorded value
-  const query: GeoQuery = geocollection.near({ center: point, radius: 100 }).where('level', '<=', newValue);
+  const query: GeoQuery = geofirestore.collection('notificationSubscribers').near({ center: point, radius: 100 }).where('level', '<=', newValue);
 
   // Get query (as Promise)
   query.get().then((value: GeoQuerySnapshot) => {
@@ -197,3 +197,14 @@ exports.updateReading = functions.firestore
         db.doc('heatmap').set({ ... });
         */
     });
+
+exports.addMessage = functions.https.onCall((data, context) => {
+  console.log(data);
+  geofirestore.collection('notificationSubscribers').add({
+    name: data.name,
+    registrationToken: data.registrationToken,
+    limit: data.limit,
+    // The coordinates field must be a GeoPoint!
+    coordinates: new admin.firestore.GeoPoint(data.lat, data.long)
+  }).catch(e=> {throw e});
+});
