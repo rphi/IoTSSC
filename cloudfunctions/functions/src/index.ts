@@ -87,7 +87,7 @@ function limit_precision(value) {
 }
 
 function calculateAQI(latestReading, oldValue) {
-  if (oldValue == null || !('basedOn' in oldValue.d)){
+  if (oldValue == null || oldValue.d.basedOn == undefined){
     return [latestReading.aqi, 1]
   } else {
     return [(latestReading.aqi + oldValue.d.basedOn)/(oldValue.d.basedOn + 1), Math.min(oldValue.d.basedOn + 1,4)]
@@ -96,7 +96,7 @@ function calculateAQI(latestReading, oldValue) {
 
 function notify_subscribers(point: admin.firestore.GeoPoint, newValue){
   //get all subscribers in 100m with a lower threshold than recorded value
-  const query: GeoQuery = geofirestore.collection('notificationSubscribers').near({ center: point, radius: 100 }).where('level', '<=', newValue);
+  const query: GeoQuery = geofirestore.collection('notificationSubscribers').near({ center: point, radius: 100 });
 
   // Get query (as Promise)
   query.get().then((value: GeoQuerySnapshot) => {
@@ -104,24 +104,26 @@ function notify_subscribers(point: admin.firestore.GeoPoint, newValue){
     value.docs.forEach(subscriberDocument => {
       const data = subscriberDocument.data();
       console.log(data)
-      const message = {
-        data: {
-          name: data['name'],
-          alertingValue: newValue
-        },
-        token: data['registrationToken']
-      };
-      
-      // Send a message to the device corresponding to the provided
-      // registration token.
-      admin.messaging().send(message)
-        .then((response) => {
-          // Response is a message ID string.
-          console.log('Successfully sent message:', response);
-        })
-        .catch((error) => {
-          console.log('Error sending message:', error);
-        });
+      if (data.limit <= newValue) {
+        const message = {
+          data: {
+            name: data['name'],
+            alertingValue: String(newValue)
+          },
+          token: data['registrationToken']
+        };
+
+        // Send a message to the device corresponding to the provided
+        // registration token.
+        admin.messaging().send(message)
+          .then((response) => {
+            // Response is a message ID string.
+            console.log('Successfully sent message:', response);
+          })
+          .catch((error) => {
+            console.log('Error sending message:', error);
+          });
+      }
       
     });
   }).catch(e=> {throw e});
@@ -140,26 +142,29 @@ exports.updateReading = functions.firestore
 
       let geopoint = new admin.firestore.GeoPoint(lat, long);
       snap.ref.update({'l':geopoint, 't': new Date()}).catch(e=> {console.log("failed to add geopoint to reading: ", e)});
-      notify_subscribers(geopoint, newValue);
+      notify_subscribers(geopoint, newValue.aqi);
 
       let current_date_string = new Date().toJSON().slice(0,10).replace(/-/g,'/');
-      let user_score_doc_reference = db.collection('userscores').doc(`${context.auth.uid}@${current_date_string}`)
-      user_score_doc_reference.get().then(documentSnapshot => {
-        console.log(documentSnapshot)
-        if (!documentSnapshot.exists) {
-          user_score_doc_reference.create({score: 500-newValue.aqi}).catch(e=> {console.log("failed to start new score: ", e)})
-        } else {
-          user_score_doc_reference.set({score: (500-newValue.aqi) + documentSnapshot.get('score')}).catch(e=> {console.log("failed to update score: ", e)})
-        }
-      }).catch(e=> {throw e});
+      console.log(context)
+      if (context.auth != undefined){
+        let user_score_doc_reference = db.collection('userscores').doc(`${context.auth.uid}@${current_date_string}`)
+        user_score_doc_reference.get().then(documentSnapshot => {
+          console.log(documentSnapshot)
+          if (!documentSnapshot.exists) {
+            user_score_doc_reference.create({score: 500-newValue.aqi}).catch(e=> {console.log("failed to start new score: ", e)})
+          } else {
+            user_score_doc_reference.set({score: (500-newValue.aqi) + documentSnapshot.get('score')}).catch(e=> {console.log("failed to update score: ", e)})
+          }
+        }).catch(e=> {throw e});
+      }
 
       return db.collection('georeadings').where("l", "==", geopoint).get().then(querySnapshot => {
         console.log(querySnapshot)
         if (!querySnapshot.empty) {
           querySnapshot.forEach(documentSnapshot => {
             console.log(`Found document at ${documentSnapshot.id}`);
-            console.log(documentSnapshot.data)
-            let values = calculateAQI(newValue, documentSnapshot.data)
+            console.log(documentSnapshot.data())
+            let values = calculateAQI(newValue, documentSnapshot.data())
             db.collection('georeadings').doc(documentSnapshot.id).update({'d.score': values[0], 'd.basedOn': values[1]}).catch(e=> {throw e})
           });
         } else {
