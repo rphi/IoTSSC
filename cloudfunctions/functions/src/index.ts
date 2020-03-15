@@ -97,15 +97,26 @@ function calculateAQI(latestReading, oldValue) {
 exports.updateReading = functions.firestore
     .document('readings/{readingId}')
     .onCreate((snap, context) => {
-        // Get an object representing the document
-        // e.g. {'name': 'Marie', 'age': 66}
-        const newValue = snap.data();
+      // Get an object representing the document
+      // e.g. {'name': 'Marie', 'age': 66}
+      const newValue = snap.data();
 
-        // access a particular field as you would any JS property
-        const lat = limit_precision(newValue.lat);
-        const long = limit_precision(newValue.long);
-        
-        let geopoint = new admin.firestore.GeoPoint(lat, long);
+      // access a particular field as you would any JS property
+      const lat = limit_precision(newValue.lat);
+      const long = limit_precision(newValue.long);
+
+      let geopoint = new admin.firestore.GeoPoint(lat, long);
+
+      let current_date_string = new Date().toJSON().slice(0,10).replace(/-/g,'/');
+      let user_score_doc_reference = db.collection('userscores').doc(`${context.auth.uid}@${current_date_string}`)
+      user_score_doc_reference.get().then(documentSnapshot => {
+        console.log(documentSnapshot)
+        if (!documentSnapshot.exists) {
+          user_score_doc_reference.create({score: 500-newValue.aqi}).catch(e=> {console.log("failed to start new score: ", e)})
+        } else {
+          user_score_doc_reference.set({score: (500-newValue.aqi) + documentSnapshot.get('score')}).catch(e=> {console.log("failed to update score: ", e)})
+        }
+
       return db.collection('georeadings').where("l", "==", geopoint).get().then(querySnapshot => {
         console.log(querySnapshot)
         if (!querySnapshot.empty) {
