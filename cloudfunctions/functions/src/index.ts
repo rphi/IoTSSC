@@ -116,6 +116,7 @@ exports.updateReading = functions.firestore
         } else {
           user_score_doc_reference.set({score: (500-newValue.aqi) + documentSnapshot.get('score')}).catch(e=> {console.log("failed to update score: ", e)})
         }
+      }).catch(e=> {throw e});
 
       return db.collection('georeadings').where("l", "==", geopoint).get().then(querySnapshot => {
         console.log(querySnapshot)
