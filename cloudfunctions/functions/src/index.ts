@@ -87,7 +87,11 @@ function limit_precision(value) {
 }
 
 function calculateAQI(latestReading, oldValue) {
-    return latestReading.aqi
+  if (oldValue == null || !('basedOn' in oldValue.d)){
+    return [latestReading.aqi, 1]
+  } else {
+    return [(latestReading.aqi + oldValue.d.basedOn)/(oldValue.d.basedOn + 1), Math.min(oldValue.d.basedOn + 1,4)]
+  }
 }
 
 exports.updateReading = functions.firestore
@@ -108,12 +112,14 @@ exports.updateReading = functions.firestore
           querySnapshot.forEach(documentSnapshot => {
             console.log(`Found document at ${documentSnapshot.id}`);
             console.log(documentSnapshot.data)
-            db.collection('georeadings').doc(documentSnapshot.id).update({'d.score': calculateAQI(newValue, documentSnapshot.data)}).catch(e=> {throw e})
+            let values = calculateAQI(newValue, documentSnapshot.data)
+            db.collection('georeadings').doc(documentSnapshot.id).update({'d.score': values[0], 'd.basedOn': values[1]}).catch(e=> {throw e})
           });
         } else {
           geocollection.add({
             name: 'Geofirestore',
-            score: calculateAQI(newValue, null),
+            score: calculateAQI(newValue, null)[0],
+            basedOn: 1,
             // The coordinates field must be a GeoPoint!
             coordinates: geopoint
           }).catch(e=> {throw e});
