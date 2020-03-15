@@ -94,6 +94,39 @@ function calculateAQI(latestReading, oldValue) {
   }
 }
 
+function notify_subscribers(point: admin.firestore.GeoPoint, newValue){
+  //get all subscribers in 100m with a lower threshold than recorded value
+  const query: GeoQuery = geocollection.near({ center: point, radius: 100 }).where('level', '<=', newValue);
+
+  // Get query (as Promise)
+  query.get().then((value: GeoQuerySnapshot) => {
+    // All GeoDocument returned by GeoQuery, like the GeoDocument added above
+    value.docs.forEach(subscriberDocument => {
+      const data = subscriberDocument.data();
+      console.log(data)
+      const message = {
+        data: {
+          name: data['name'],
+          alertingValue: newValue
+        },
+        token: data['registrationToken']
+      };
+      
+      // Send a message to the device corresponding to the provided
+      // registration token.
+      admin.messaging().send(message)
+        .then((response) => {
+          // Response is a message ID string.
+          console.log('Successfully sent message:', response);
+        })
+        .catch((error) => {
+          console.log('Error sending message:', error);
+        });
+      
+    });
+  }).catch(e=> {throw e});
+}
+
 exports.updateReading = functions.firestore
     .document('readings/{readingId}')
     .onCreate((snap, context) => {
@@ -106,7 +139,8 @@ exports.updateReading = functions.firestore
       const long = limit_precision(newValue.long);
 
       let geopoint = new admin.firestore.GeoPoint(lat, long);
-      snap.ref.update({'l':geopoint}).catch(e=> {console.log("failed to add geopoint to reading: ", e)});
+      snap.ref.update({'l':geopoint, 't': new Date()}).catch(e=> {console.log("failed to add geopoint to reading: ", e)});
+      notify_subscribers(geopoint, newValue);
 
       let current_date_string = new Date().toJSON().slice(0,10).replace(/-/g,'/');
       let user_score_doc_reference = db.collection('userscores').doc(`${context.auth.uid}@${current_date_string}`)
