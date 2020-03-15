@@ -106,6 +106,7 @@ exports.updateReading = functions.firestore
       const long = limit_precision(newValue.long);
 
       let geopoint = new admin.firestore.GeoPoint(lat, long);
+      snap.ref.update({'l':geopoint}).catch(e=> {console.log("failed to add geopoint to reading: ", e)});
 
       let current_date_string = new Date().toJSON().slice(0,10).replace(/-/g,'/');
       let user_score_doc_reference = db.collection('userscores').doc(`${context.auth.uid}@${current_date_string}`)
