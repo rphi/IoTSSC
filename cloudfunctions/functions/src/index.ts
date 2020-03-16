@@ -151,9 +151,9 @@ exports.updateReading = functions.firestore
         user_score_doc_reference.get().then(documentSnapshot => {
           console.log(documentSnapshot)
           if (!documentSnapshot.exists) {
-            user_score_doc_reference.create({score: 500-newValue.aqi}).catch(e=> {console.log("failed to start new score: ", e)})
+            user_score_doc_reference.create({score: 500-newValue.aqi, name: newValue.username}).catch(e=> {console.log("failed to start new score: ", e)})
           } else {
-            user_score_doc_reference.set({score: (500-newValue.aqi) + documentSnapshot.get('score')}).catch(e=> {console.log("failed to update score: ", e)})
+            user_score_doc_reference.set({score: (500-newValue.aqi) + documentSnapshot.get('score'), name: newValue.username}).catch(e=> {console.log("failed to update score: ", e)})
           }
         }).catch(e=> {throw e});
       }

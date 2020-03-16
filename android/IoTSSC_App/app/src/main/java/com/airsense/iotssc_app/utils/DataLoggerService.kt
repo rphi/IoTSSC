@@ -258,7 +258,8 @@ class DataLoggerService : Service() {
                             "eco2" to response.eco2,
                             "lat" to location.latitude,
                             "long" to location.longitude,
-                            "auth" to user?.uid
+                            "auth" to user?.uid,
+                            "username" to user?.displayName
                     )
                     doc["aqi"] = messageToAQI(response)
 
