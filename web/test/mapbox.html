@@ -65,9 +65,10 @@
                   ],
                   // increase radius as zoom increases
                   'heatmap-radius': {
+                    type: 'exponential',
                     stops: [
-                      [11, 15],
-                      [15, 20]
+                      [15, 15],
+                      [40, 2000]
                     ]
                   },
                   // decrease opacity to transition into the circle layer
