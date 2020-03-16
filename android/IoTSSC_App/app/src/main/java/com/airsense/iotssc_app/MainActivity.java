@@ -273,11 +273,8 @@ public class MainActivity extends AppCompatActivity {
                 selectDeviceButton.setVisibility(View.VISIBLE);
                 bluetoothScanningProgressBar.setVisibility(View.GONE);
                 selectDeviceButton();
-
+                hasBluetoothScanStarted = false;
             }
-
-            // updates the device scanning state
-            hasBluetoothScanStarted = !hasBluetoothScanStarted;
 
             return true;
         }
@@ -334,6 +331,7 @@ public class MainActivity extends AppCompatActivity {
                     // update views for scanning
                     activityTitleTextView.setText(R.string.scanning_for_devices);
                     bluetoothScanningProgressBar.setVisibility(View.VISIBLE);
+                    hasBluetoothScanStarted = true;
                 }
             } else {
                 mNoBluetoothView.setVisibility(View.VISIBLE);

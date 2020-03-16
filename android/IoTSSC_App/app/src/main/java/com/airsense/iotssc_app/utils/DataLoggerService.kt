@@ -261,6 +261,7 @@ class DataLoggerService : Service() {
                             "auth" to user?.uid,
                             "username" to user?.displayName
                     )
+                    Log.i("doc", doc.toString())
                     doc["aqi"] = messageToAQI(response)
 
                     firestore.collection("readings").add(doc)
