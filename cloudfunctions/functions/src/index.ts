@@ -144,10 +144,10 @@ exports.updateReading = functions.firestore
       snap.ref.update({'l':geopoint, 't': new Date()}).catch(e=> {console.log("failed to add geopoint to reading: ", e)});
       notify_subscribers(geopoint, newValue.aqi);
 
-      let current_date_string = new Date().toJSON().slice(0,10).replace(/-/g,'/');
-      console.log(context)
-      if (context.auth != undefined){
-        let user_score_doc_reference = db.collection('userscores').doc(`${context.auth.uid}@${current_date_string}`)
+      let current_date_string = new Date().toJSON().slice(0,10).replace(/-/g,'-');
+      console.log(newValue)
+      if (newValue.auth != undefined){
+        let user_score_doc_reference = db.collection('userscores').doc(`${current_date_string}/scores/${newValue.auth}`)
         user_score_doc_reference.get().then(documentSnapshot => {
           console.log(documentSnapshot)
           if (!documentSnapshot.exists) {
