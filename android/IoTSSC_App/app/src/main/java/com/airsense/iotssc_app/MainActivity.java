@@ -445,8 +445,11 @@ public class MainActivity extends AppCompatActivity {
                                            @NonNull final int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case REQUEST_ACCESS_FINE_LOCATION:
-                break;
+            case REQUEST_ACCESS_FINE_LOCATION: {
+                mNoLocationPermissionView.setVisibility(View.GONE);
+                appLoadingProgressBar.setVisibility(View.VISIBLE);
+                activityTitleTextView.setVisibility(View.VISIBLE);
+            }
         }
     }
 

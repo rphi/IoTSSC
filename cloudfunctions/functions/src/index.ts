@@ -86,11 +86,11 @@ function limit_precision(value) {
   return Math.round(inflated_value) / (2 * 1000)
 }
 
-function calculateAQI(latestReading, oldValue) {
+function calculateAQI(latestReading, oldValue, max_based_on = 4) {
   if (oldValue == null || oldValue.d.basedOn == undefined){
     return [latestReading.aqi, 1]
   } else {
-    return [(latestReading.aqi + oldValue.d.basedOn)/(oldValue.d.basedOn + 1), Math.min(oldValue.d.basedOn + 1,4)]
+    return [(latestReading.aqi + oldValue.d.score * oldValue.d.basedOn)/(oldValue.d.basedOn + 1), Math.min(oldValue.d.basedOn + 1,max_based_on)]
   }
 }
 
@@ -156,6 +156,28 @@ exports.updateReading = functions.firestore
             user_score_doc_reference.set({score: (500-newValue.aqi) + documentSnapshot.get('score'), name: newValue.username}).catch(e=> {console.log("failed to update score: ", e)})
           }
         }).catch(e=> {throw e});
+          let user_exposure = db.collection('userexposure').doc(`${newValue.auth}`)
+          user_exposure.get().then(documentSnapshot => {
+              console.log(documentSnapshot)
+              if (!documentSnapshot.exists) {
+                  let new_data = {d:{basedOn:1, score: newValue.aqi}};
+                  new_data[current_date_string] = {exposureTotal: newValue.aqi};
+                  user_exposure.create(new_data).catch(e=> {console.log("failed to start new exposure tracker: ", e)});
+              } else {
+                  let todays_data = documentSnapshot.get(current_date_string);
+                  let updateData = {};
+                  if (todays_data == undefined) {
+                      updateData[current_date_string + ".exposureTotal"]= newValue.aqi
+                  } else {
+                      updateData[current_date_string + ".exposureTotal"]= newValue.aqi + documentSnapshot.get(current_date_string + ".exposureTotal")
+                  }
+                  let x = calculateAQI(newValue, documentSnapshot.data(), 60*10);
+                  updateData["d.basedOn"] = x[1];
+                  updateData["d.score"] = x[0];
+                  console.log(updateData);
+                  user_score_doc_reference.update(updateData).catch(e=> {console.log("failed to update score: ", e)})
+              }
+          }).catch(e=> {throw e});
       }
 
       return db.collection('georeadings').where("l", "==", geopoint).get().then(querySnapshot => {
