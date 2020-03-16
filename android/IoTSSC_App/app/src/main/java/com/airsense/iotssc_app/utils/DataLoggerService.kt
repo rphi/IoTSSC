@@ -15,6 +15,8 @@ import com.airsense.iotssc_app.MainActivity
 import com.airsense.iotssc_app.R
 import com.airsense.iotssc_app.adapter.BluetoothReceiver
 import com.google.android.gms.location.LocationServices
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.functions.FirebaseFunctions
 import com.google.gson.Gson
@@ -47,6 +49,7 @@ class DataLoggerService : Service() {
     private lateinit var reconnectTask: TimerTask
 
     private lateinit var firestore: FirebaseFirestore
+    private var user: FirebaseUser? = null
 
     companion object {
         fun startService(context: Context, message: String) {
@@ -73,6 +76,8 @@ class DataLoggerService : Service() {
 
         functions = FirebaseFunctions.getInstance()
         firestore = FirebaseFirestore.getInstance()
+        user = FirebaseAuth.getInstance().currentUser
+
 
 
         //stopSelf();
@@ -252,7 +257,8 @@ class DataLoggerService : Service() {
                             "voc" to response.voc,
                             "eco2" to response.eco2,
                             "lat" to location.latitude,
-                            "long" to location.longitude
+                            "long" to location.longitude,
+                            "auth" to user?.uid
                     )
                     doc["aqi"] = messageToAQI(response)
 
