@@ -1,5 +1,5 @@
 <template>
-  <div class="text-center">
+  <div v-if="login_needed" class="text-center">
     <div class="m-5">
       <h1>Well hey there!</h1>
       <h3>Nice to meet you :)</h3>
@@ -23,11 +23,10 @@ var ui = new firebaseui.auth.AuthUI(Auth);
 
 var uiConfig = {
   callbacks: {
-    signInSuccessWithAuthResult: function(authResult, redirectUrl) {
+    signInSuccessWithAuthResult: function() {
       // User successfully signed in.
       // Return type determines whether we continue the redirect automatically
       // or whether we leave that to developer to handle.
-      alert(`Logged in: ${authResult}, ${redirectUrl}`)
       return true;
     },
     uiShown: function() {
@@ -54,9 +53,24 @@ export default {
       this.$router.push('/');
       return;
     }
-    this.$nextTick(function () {
-      ui.start('#firebaseui-auth-container', uiConfig);
-    })
+    Auth.onAuthStateChanged((user) => {
+      if (user) {
+        // already logged in
+        this.$router.push('/');
+        return;
+      } else {
+        // not logged in
+        this.login_needed = true;
+        this.$nextTick(function () {
+          ui.start('#firebaseui-auth-container', uiConfig);
+        })
+      }
+    });
+  },
+  data() {
+    return {
+      login_needed: false
+    }
   }
 }
 </script>

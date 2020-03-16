@@ -6,7 +6,10 @@
     ]
   },
   "hosting": {
-    "public": "hosting",
+    "predeploy": [
+      "hosting/build.sh"
+    ],
+    "public": "hosting/airsense/dist",
     "ignore": [
       "firebase.json",
       "**/.*",

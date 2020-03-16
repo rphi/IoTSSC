@@ -21,10 +21,12 @@
 
 <style>
 @import url("https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css");
+@import url("https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.4.2/mapbox-gl-geocoder.css");
 </style>
 
 <script>
 import mapboxgl from 'mapbox-gl';
+var MapboxGeocoder = require('@mapbox/mapbox-gl-geocoder');
 
 function startmap() {
   mapboxgl.accessToken = 'pk.eyJ1IjoicnBoaSIsImEiOiJjam52bDE0bjQwYWx3M3BxdDlxeWR6ZXJ4In0.xYvhKxiSm3f858diHlu3lA';
@@ -34,6 +36,13 @@ function startmap() {
       center: [-3.189, 55.9437],
       zoom: 13
   });
+
+  map.addControl(
+    new MapboxGeocoder({
+      accessToken: mapboxgl.accessToken,
+      mapboxgl: mapboxgl
+    })
+  );
 
   map.on('load', function() {
       // Add a geojson point source.
@@ -78,8 +87,8 @@ function startmap() {
                 // increase radius as zoom increases
                 'heatmap-radius': {
                   stops: [
-                    [11, 15],
-                    [15, 20]
+                    [11, 20],
+                    [15, 40]
                   ]
                 },
                 // decrease opacity to transition into the circle layer
@@ -146,6 +155,8 @@ function startmap() {
           },
           'waterway-label'
       );
+      var nav = new mapboxgl.NavigationControl();
+      map.addControl(nav, 'top-left');
     });
 }
 

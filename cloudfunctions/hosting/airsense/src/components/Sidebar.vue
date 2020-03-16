@@ -39,14 +39,19 @@
           </b-link>
         </li>
         <li class="nav-item">
-          <b-link class="nav-link" to="/cleanest">
+          <b-link class="nav-link" to="/leaderboard">
+            Leaderboard
+          </b-link>
+        </li>
+        <li class="nav-item">
+          <b-link class="nav-link" to="/cleanlocations">
             <span data-feather="file-text"></span>
             Cleanest locations
           </b-link>
         </li>
         <li class="nav-item">
-          <b-link class="nav-link" to="/blog">
-            BreathEasy Newsdesk
+          <b-link class="nav-link" to="/help">
+            Help
           </b-link>
         </li>
       </ul>

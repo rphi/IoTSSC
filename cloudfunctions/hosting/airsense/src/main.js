@@ -12,6 +12,11 @@ import Dashboard from './components/Dashboard.vue'
 import GlobalMap from './components/GlobalMap.vue'
 import Login from './components/Login.vue'
 import Account from './components/Account.vue'
+import Help from './components/Help.vue'
+import Readings from './components/Readings.vue'
+import Leaderboard from './components/Leaderboard.vue'
+import Cleanspots from './components/Cleanspots.vue'
+import LoginWall from './components/LoginWall.vue'
 
 Vue.config.productionTip = false
 
@@ -27,7 +32,11 @@ const routes = [
   { path: '/home', component: Dashboard },
   { path: '/map', component: GlobalMap },
   { path: '/login', component: Login },
-  { path: '/account', component: Account}
+  { path: '/account', component: LoginWall, props: { protectedComponent: Account } },
+  { path: '/help', component: Help },
+  { path: '/readings', component: LoginWall, props: { protectedComponent: Readings } },
+  { path: '/leaderboard', component: Leaderboard },
+  { path: '/cleanlocations', component: Cleanspots }
 ]
 
 const router = new VueRouter({
