@@ -156,8 +156,10 @@ exports.updateReading = functions.firestore
             user_score_doc_reference.set({score: (500-newValue.aqi) + documentSnapshot.get('score'), name: newValue.username}).catch(e=> {console.log("failed to update score: ", e)})
           }
         }).catch(e=> {throw e});
+        //.log("before user exposure block")
           let user_exposure = db.collection('userexposure').doc(`${newValue.auth}`)
           user_exposure.get().then(documentSnapshot => {
+              //console.log("in user exposure block")
               console.log(documentSnapshot)
               if (!documentSnapshot.exists) {
                   let new_data = {d:{basedOn:1, score: newValue.aqi}};
@@ -165,17 +167,18 @@ exports.updateReading = functions.firestore
                   user_exposure.create(new_data).catch(e=> {console.log("failed to start new exposure tracker: ", e)});
               } else {
                   let todays_data = documentSnapshot.get(current_date_string);
-                  let updateData = {};
+                  let updateData = {d: {basedOn:0, score:0}};
+                  updateData[current_date_string] = {exposureTotal: 0};
                   if (todays_data == undefined) {
-                      updateData[current_date_string + ".exposureTotal"]= newValue.aqi
+                      updateData[current_date_string].exposureTotal = newValue.aqi
                   } else {
-                      updateData[current_date_string + ".exposureTotal"]= newValue.aqi + documentSnapshot.get(current_date_string + ".exposureTotal")
+                      updateData[current_date_string].exposureTotal = newValue.aqi + documentSnapshot.get(current_date_string + ".exposureTotal")
                   }
                   let x = calculateAQI(newValue, documentSnapshot.data(), 60*10);
-                  updateData["d.basedOn"] = x[1];
-                  updateData["d.score"] = x[0];
+                  updateData.d.basedOn = x[1];
+                  updateData.d.score = x[0];
                   console.log(updateData);
-                  user_score_doc_reference.update(updateData).catch(e=> {console.log("failed to update score: ", e)})
+                  user_exposure.set(updateData, {merge: true}).catch(e=> {console.log("failed to update score: ", e)})
               }
           }).catch(e=> {throw e});
       }
