@@ -176,7 +176,7 @@ class DataLoggerService : Service() {
                 0, notificationIntent, 0
         )
         return NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Foreground Service Kotlin Example")
+                .setContentTitle("AirSense data logger")
                 .setContentText(text)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentIntent(pendingIntent)
@@ -364,7 +364,7 @@ class DataLoggerService : Service() {
 
     fun onError(error: Throwable){
         Log.e("bluetooth error", error.toString())
-        updateNotification("LOL no it ded")
+        updateNotification("Unable to contact device")
         if (::updateTask.isInitialized) {
             updateTask.cancel()
         }
