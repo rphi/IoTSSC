@@ -2,9 +2,11 @@ package com.airsense.iotssc_app
 
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
+import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.tasks.OnCompleteListener
@@ -94,6 +96,25 @@ class TrackerActivity : AppCompatActivity() {
                 true
             })
         })
+
+        val alertButton = findViewById<Button>(R.id.clearAlerts)
+        // set on-click listener
+        alertButton.setOnClickListener {
+            firestore.collection("notificationSubscribers")
+                    .whereEqualTo("d.registrationToken", token)
+                    .get()
+                    .addOnSuccessListener { documents ->
+                        for (document in documents) {
+                            document.reference.delete().addOnCompleteListener { _ ->
+                                Log.i("TrackerActivity", "deleted subscription")
+                            }
+                        }
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.w("TrackerActivity", "Error getting documents fore deletion: ", exception)
+                    }
+            symbolManager.deleteAll()
+        }
     }
 
     private fun startPointSubscription(point: LatLng){
