@@ -12,6 +12,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.airsense.iotssc_app.ApplicationData
+import com.airsense.iotssc_app.HomeActivity
 import com.airsense.iotssc_app.MainActivity
 import com.airsense.iotssc_app.R
 import com.airsense.iotssc_app.adapter.BluetoothReceiver
@@ -165,7 +166,7 @@ class DataLoggerService : Service() {
     private fun getMyActivityNotification(text: String): Notification {
         // The PendingIntent to launch our activity if the user selects
         // this notification
-        val notificationIntent = Intent(this, MainActivity::class.java)
+        val notificationIntent = Intent(this, HomeActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
                 this,
                 0, notificationIntent, 0
