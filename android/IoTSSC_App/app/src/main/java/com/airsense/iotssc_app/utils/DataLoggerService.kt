@@ -224,7 +224,8 @@ class DataLoggerService : Service() {
     fun messageToAQI(message: SerialMessage): Float? {
         val co = interpolateBetweenBreaks(message.co,4.4f, 9.4f, 12.4f, 15.4f, 30.4f, 40.4f, 50.4f)
         val no2 = interpolateBetweenBreaks(message.no2, 53f,100f,360f,649f,1249f,1649f,2049f)
-        return max(co!!, no2!!)
+        val dust = interpolateBetweenBreaks(message.dust?.times(1000), 35000f,75000f,115000f,150000f,250000f,500000f, 750000f)
+        return max(max(co!!, no2!!), dust!!)
     }
 
 
