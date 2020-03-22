@@ -59,9 +59,10 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="13dp"
-        android:text="Your total exposure today:"
+        android:layout_marginBottom="16dp"
+        android:text="Your total exposure today out of an irritating daily amount:"
         app:layout_constraintBottom_toTopOf="@+id/exposureBar"
-        tools:layout_editor_absoluteX="82dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
