@@ -520,7 +520,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DataLoggerService.class);
         startService(intent);
 
-        Intent activityIntent = new Intent(this, TrackerActivity.class);
+        //Intent activityIntent = new Intent(this, TrackerActivity.class);
+        //startActivity(activityIntent);
+        Intent activityIntent = new Intent(this, HomeActivity.class);
         startActivity(activityIntent);
 
         //bluetoothManager.openSerialDevice(mac)

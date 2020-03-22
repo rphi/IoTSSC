@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HomeActivity">
+
+    <Button
+        android:id="@+id/alertbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="24dp"
+        android:drawableStart="@drawable/ic_iconfinder_map_marker_299087"
+        android:drawableTop="@android:drawable/ic_popup_reminder"
+        android:drawablePadding="16dp"
+        android:drawableTint="#FF0000"
+        android:drawableTintMode="add"
+        android:paddingTop="16dp"
+        android:text="Alerts"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/webbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:drawableStart="@drawable/ic_iconfinder_map_marker_299087"
+        android:drawableTop="@drawable/ic_cloud_black_24dp"
+        android:drawablePadding="16dp"
+        android:drawableTint="#FF0000"
+        android:drawableTintMode="add"
+        android:paddingTop="16dp"
+        android:text="Website"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/logsbutton"
+        app:layout_constraintStart_toEndOf="@+id/alertbutton" />
+
+    <Button
+        android:id="@+id/logsbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="24dp"
+        android:drawableStart="@drawable/ic_iconfinder_map_marker_299087"
+        android:drawableTop="@android:drawable/ic_popup_reminder"
+        android:drawablePadding="16dp"
+        android:drawableTint="#FF0000"
+        android:drawableTintMode="add"
+        android:paddingTop="16dp"
+        android:text="Logs"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/exposureBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="248dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="116dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
