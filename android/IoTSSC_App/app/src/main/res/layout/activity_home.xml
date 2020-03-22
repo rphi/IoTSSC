@@ -6,50 +6,38 @@
     android:layout_height="match_parent"
     tools:context=".HomeActivity">
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/alertbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
         android:layout_marginBottom="24dp"
-        android:drawableStart="@drawable/ic_iconfinder_map_marker_299087"
         android:drawableTop="@android:drawable/ic_popup_reminder"
-        android:drawablePadding="16dp"
-        android:drawableTint="#FF0000"
         android:drawableTintMode="add"
-        android:paddingTop="16dp"
         android:text="Alerts"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
+
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/webbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
-        android:drawableStart="@drawable/ic_iconfinder_map_marker_299087"
         android:drawableTop="@drawable/ic_cloud_black_24dp"
-        android:drawablePadding="16dp"
-        android:drawableTint="#FF0000"
-        android:drawableTintMode="add"
         android:paddingTop="16dp"
         android:text="Website"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/logsbutton"
         app:layout_constraintStart_toEndOf="@+id/alertbutton" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/logsbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="40dp"
         android:layout_marginBottom="24dp"
-        android:drawableStart="@drawable/ic_iconfinder_map_marker_299087"
         android:drawableTop="@android:drawable/ic_popup_reminder"
-        android:drawablePadding="16dp"
-        android:drawableTint="#FF0000"
-        android:drawableTintMode="add"
-        android:paddingTop="16dp"
         android:text="Logs"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
