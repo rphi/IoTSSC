@@ -18,7 +18,7 @@ import java.lang.Integer.min
 
 
 class HomeActivity : AppCompatActivity() {
-    private val EXPOSURELIMIT = 1440 * 125 // mins in day * midway through unhealthy to sensitive group section of index
+    private val EXPOSURELIMIT = 150 // lowest unhealthy to all section of index
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,17 +47,21 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun updateProgressBar(){
+        val progressBar =findViewById<ProgressBar>(R.id.exposureBar)
         val exposurePrefs = applicationContext.getSharedPreferences(
                 applicationContext.getString(R.string.daily_exposure_file), Context.MODE_PRIVATE)
-        val exposure = exposurePrefs.getInt("total", 0)
+        val exposure = exposurePrefs.getInt("total", 0) / exposurePrefs.getInt("totalReadings", 1)
+        progressBar.isIndeterminate = exposure == 0
         Log.i("home", "updating exposure total to: $exposure")
-        val progressBar =findViewById<ProgressBar>(R.id.exposureBar)
+
         progressBar.progress = exposure
-        val red = min((exposure/EXPOSURELIMIT)*255, 255)
-        val green = max(((EXPOSURELIMIT-exposure)/EXPOSURELIMIT)*255, 0)
-        val states = arrayOf(intArrayOf(android.R.attr.state_enabled), intArrayOf(-android.R.attr.state_enabled), intArrayOf(-android.R.attr.state_checked), intArrayOf(android.R.attr.state_pressed))
-        val colours = intArrayOf(Color.argb(255,red,green, 0))
-        progressBar.backgroundTintList = ColorStateList(arrayOf(intArrayOf(android.R.attr.state_enabled)), colours)
+        val red = min(((exposure.toFloat()/EXPOSURELIMIT)*255).toInt(), 255)
+        val green = max((((EXPOSURELIMIT-exposure).toFloat()/EXPOSURELIMIT)*255).toInt(), 0)
+        //val states = arrayOf(intArrayOf(android.R.attr.state_enabled), intArrayOf(-android.R.attr.state_enabled), intArrayOf(-android.R.attr.state_checked), intArrayOf(android.R.attr.state_pressed))
+        //val colours = intArrayOf(Color.argb(255,red,green, 0))
+        //progressBar.backgroundTintList = ColorStateList(arrayOf(intArrayOf(android.R.attr.state_enabled)), colours)
+        //progressBar.setBackgroundColor(Color.argb(255,red,green, 0))
+        progressBar.progressDrawable.setTint(Color.argb(255,red,green, 0))
 
     }
 

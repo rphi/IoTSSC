@@ -78,7 +78,7 @@ class DataLoggerService : Service() {
         val notification = getMyActivityNotification(input)
         startForeground(1, notification)
 
-
+        initialiseDailies()
         initialiseConnection()
 
         Log.d("tac","ready")
@@ -93,25 +93,29 @@ class DataLoggerService : Service() {
         return START_NOT_STICKY
     }
 
-    private fun initialiseConnection(){
-        val ctx = applicationContext
-        val prefs = ctx.getSharedPreferences(
-                ctx.getString(R.string.bluetooth_settings_file), Context.MODE_PRIVATE)
-        val uuid = prefs.getString("UUID", null)
-        Log.i("tac", "btooth uuid=$uuid")
-
-        exposurePrefs = ctx.getSharedPreferences(
-                ctx.getString(R.string.daily_exposure_file), Context.MODE_PRIVATE)
+    private fun initialiseDailies(){
+        exposurePrefs = applicationContext.getSharedPreferences(
+                applicationContext.getString(R.string.daily_exposure_file), Context.MODE_PRIVATE)
         val date_from = exposurePrefs.getString("from", null)
         today = dateFormatter.format(Calendar.getInstance().time)
         if (date_from != today){
             val editor = exposurePrefs.edit()
             editor.putString("from", today)
             editor.putInt("total", 0)
+            editor.putInt("totalReadings", 1)
             editor.apply()
         } else {
             totalExposure = exposurePrefs.getInt("total", 0)
+            update_counter = exposurePrefs.getInt("totalReadings", 0)
         }
+    }
+
+    private fun initialiseConnection(){
+        val ctx = applicationContext
+        val prefs = ctx.getSharedPreferences(
+                ctx.getString(R.string.bluetooth_settings_file), Context.MODE_PRIVATE)
+        val uuid = prefs.getString("UUID", null)
+        Log.i("tac", "btooth uuid=$uuid")
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         bluetoothManager = BluetoothManager.getInstance()
@@ -328,16 +332,18 @@ class DataLoggerService : Service() {
     private fun updateTotalExposure(aqi: Float){
         totalExposure += aqi.toInt()
         update_counter += 1
-        if (update_counter % 5 == 0){
+        if (update_counter % 5 == 1){
             val editor = exposurePrefs.edit()
             val now = dateFormatter.format(Calendar.getInstance().time)
             if (today != now){
                 Log.i("tac", "Date change")
                 today = now
                 editor.putString("from", today)
+                update_counter = 1
                 totalExposure = aqi.toInt()
             }
             editor.putInt("total", totalExposure)
+            editor.putInt("totalReadings", update_counter)
             editor.apply()
             Log.i("tac", "saving total exposure of $totalExposure to store")
         }
