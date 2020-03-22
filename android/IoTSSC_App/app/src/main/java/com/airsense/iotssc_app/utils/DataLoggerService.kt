@@ -4,6 +4,7 @@ import android.app.*
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.location.Location
 import android.os.Build
 import android.os.IBinder
@@ -26,6 +27,8 @@ import com.harrysoft.androidbluetoothserial.SimpleBluetoothDeviceInterface
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.lang.Error
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -50,6 +53,11 @@ class DataLoggerService : Service() {
 
     private lateinit var firestore: FirebaseFirestore
     private var user: FirebaseUser? = null
+    private val dateFormatter: DateFormat = SimpleDateFormat("dd/MM/yyyy")
+    private lateinit var exposurePrefs: SharedPreferences
+    private lateinit var today: String
+    private var totalExposure: Int = 0
+    private var update_counter = 0
 
     companion object {
         fun startService(context: Context, message: String) {
@@ -90,6 +98,19 @@ class DataLoggerService : Service() {
                 ctx.getString(R.string.bluetooth_settings_file), Context.MODE_PRIVATE)
         val uuid = prefs.getString("UUID", null)
         Log.i("tac", "btooth uuid=$uuid")
+
+        exposurePrefs = ctx.getSharedPreferences(
+                ctx.getString(R.string.daily_exposure_file), Context.MODE_PRIVATE)
+        val date_from = exposurePrefs.getString("from", null)
+        today = dateFormatter.format(Calendar.getInstance().time)
+        if (date_from != today){
+            val editor = exposurePrefs.edit()
+            editor.putString("from", today)
+            editor.putInt("total", 0)
+            editor.apply()
+        } else {
+            totalExposure = exposurePrefs.getInt("total", 0)
+        }
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         bluetoothManager = BluetoothManager.getInstance()
@@ -263,9 +284,12 @@ class DataLoggerService : Service() {
                             "username" to user?.displayName
                     )
                     Log.i("doc", doc.toString())
-                    doc["aqi"] = messageToAQI(response)
+                    val aqi = messageToAQI(response)
+                    doc["aqi"] = aqi
 
                     firestore.collection("readings").add(doc)
+
+                    updateTotalExposure(aqi!!)
 
                 } else {
                     Log.i("tac", "got null location")
@@ -298,6 +322,24 @@ class DataLoggerService : Service() {
             "eco2":400
          }
          */
+    }
+
+    private fun updateTotalExposure(aqi: Float){
+        totalExposure += aqi.toInt()
+        update_counter += 1
+        if (update_counter % 5 == 0){
+            val editor = exposurePrefs.edit()
+            val now = dateFormatter.format(Calendar.getInstance().time)
+            if (today != now){
+                Log.i("tac", "Date change")
+                today = now
+                editor.putString("from", today)
+                totalExposure = aqi.toInt()
+            }
+            editor.putInt("total", totalExposure)
+            editor.apply()
+            Log.i("tac", "saving total exposure of $totalExposure to store")
+        }
     }
 
     fun requestUpdate() {

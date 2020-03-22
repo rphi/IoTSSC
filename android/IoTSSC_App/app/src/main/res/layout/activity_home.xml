@@ -48,8 +48,20 @@
         android:layout_width="248dp"
         android:layout_height="50dp"
         android:layout_marginTop="116dp"
+        android:indeterminate="false"
+        android:max="200"
+        android:progressTint="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="13dp"
+        android:text="Your total exposure today:"
+        app:layout_constraintBottom_toTopOf="@+id/exposureBar"
+        tools:layout_editor_absoluteX="82dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
