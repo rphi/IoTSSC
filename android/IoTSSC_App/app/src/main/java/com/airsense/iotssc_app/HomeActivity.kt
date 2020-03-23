@@ -11,6 +11,7 @@ import android.os.Handler
 import android.util.Log
 import android.widget.Button
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.airsense.iotssc_app.utils.DataLoggerService
 import java.lang.Integer.max
@@ -53,6 +54,18 @@ class HomeActivity : AppCompatActivity() {
         val exposure = exposurePrefs.getInt("total", 0) / exposurePrefs.getInt("totalReadings", 1)
         progressBar.isIndeterminate = exposure == 0
         Log.i("home", "updating exposure total to: $exposure")
+        val exposureText = findViewById<TextView>(R.id.exposureDescription)
+        if (exposure == 0){
+            exposureText.text = "Warming Up"
+        } else if (exposure < 50) {
+            exposureText.text = "Good"
+        } else if (exposure < 100) {
+            exposureText.text = "Moderate"
+        } else if (exposure < 150) {
+            exposureText.text = "Unhealthy if Sensitive"
+        } else {
+            exposureText.text = "Unhealthy"
+        }
 
         progressBar.progress = exposure
         val red = min(((exposure.toFloat()/EXPOSURELIMIT)*255).toInt(), 255)
