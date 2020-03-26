@@ -1,6 +1,7 @@
 <template>
   <div>
     <h1>My readings</h1>
+    <p>Raw sensor readings from our API</p>
     <b-overlay :show="show" rounded="sm">
       <b-table striped hover :items="readings"></b-table>
     </b-overlay>
@@ -15,18 +16,19 @@ export default {
     let self = this;
     Db.collection("readings")
     .where("auth", "==", this.uid)
+    .limit(300)
     .get()
     .then(function(querySnapshot) {
       querySnapshot.forEach(function(doc) {
         // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, " => ", doc.data());
+        //console.log(doc.id, " => ", doc.data());
         self.readings.push({
           id: doc.id,
           data: doc.data()
         })
       });
       self.show = false;
-      console.log(self.readings);
+      //console.log(self.readings);
     })
     .catch(function(error) {
         console.log("Error getting documents: ", error);

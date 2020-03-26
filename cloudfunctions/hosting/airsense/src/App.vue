@@ -1,10 +1,10 @@
 <template>
   <div id="app" style="min-height: 100vh;">
     <Nav />
-    <div class="container-fluid">
+    <div class="container-fluid" style="min-height: 100%;">
       <div class="row">
         <Sidebar />
-        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 col-xl-11 px-4">
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 col-xl-11">
           <router-view></router-view>
         </main>
       </div>

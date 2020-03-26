@@ -4,8 +4,8 @@
       <h1 class="h2">Global Air Quality Heatmap</h1>
       <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group mr-2">
-          <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
-          <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+          <button class="btn btn-sm btn-outline-secondary">Share</button>
+          <a href="https://us-central1-iotssc-aqm.cloudfunctions.net/api/points/?lat=57.7&long=-3.3&radius=1000000&limit=100" target="_blank" class="btn btn-sm btn-outline-secondary">Export</a>
         </div>
         <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
           <span data-feather="calendar"></span>
@@ -80,7 +80,7 @@ function startmap() {
                   'interpolate',
                   ['linear'],
                   ['heatmap-density'],
-                  0, 'rgba(0, 0, 0, 0.35)',
+                  0, 'rgba(0, 0, 0, 0.0)',
                   1, 'rgba(211,0,8,0.73)',
                   //10, 'rgba(255, 47, 47, 0.90)'
                 ],
@@ -155,6 +155,28 @@ function startmap() {
           },
           'waterway-label'
       );
+
+      // When a click event occurs on a feature in
+      // the unclustered-point layer, open a popup at
+      // the location of the feature, with
+      // description HTML from its properties.
+      map.on('click', 'readings-point', function(e) {
+      
+        var coordinates = e.features[0].geometry.coordinates.slice();
+        
+        // Ensure that if the map is zoomed out such that
+        // multiple copies of the feature are visible, the
+        // popup appears over the copy being pointed to.
+        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+        }
+        
+        new mapboxgl.Popup()
+        .setLngLat(coordinates)
+        .setHTML("Hi this is a test")
+        .addTo(map);
+      });
+
       var nav = new mapboxgl.NavigationControl();
       map.addControl(nav, 'top-left');
     });

@@ -1,6 +1,6 @@
 <template>
   <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-    <a class="navbar-brand col-sm-3 col-md-2 col-xl-1 mr-0" href="#">AirSense</a>
+    <a class="navbar-brand col-sm-3 col-md-2 col-xl-1 mr-0" href="#/">AirSense</a>
     <ul class="navbar-nav px-3 ">
       <li v-if="user" class="nav-item text-nowrap">
         <b-link class="nav-link" v-on:click="signout()">Hi {{ user.displayName }}! Sign out?</b-link>
@@ -32,6 +32,7 @@ export default {
     },
     signout() {
       Auth.signOut();
+      this.$router.push('/');
     }
   }
 }

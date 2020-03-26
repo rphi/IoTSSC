@@ -17,6 +17,8 @@ import Readings from './components/Readings.vue'
 import Leaderboard from './components/Leaderboard.vue'
 import Cleanspots from './components/Cleanspots.vue'
 import LoginWall from './components/LoginWall.vue'
+import Welcome from './components/Welcome.vue'
+import Exposure from './components/Exposure.vue'
 
 Vue.config.productionTip = false
 
@@ -25,17 +27,21 @@ Vue.use(BootstrapVue)
 // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin)
 
+//Vue.use(TwitterFeed)
+
 Vue.use(VueRouter)
 
 const routes = [
   { path: '/', redirect: '/home' },
-  { path: '/home', component: Dashboard },
-  { path: '/map', component: GlobalMap },
+  { path: '/welcome', component: Welcome },
+  { path: '/home', component: LoginWall, props: { protectedComponent: Dashboard, toWelcome: true } },
+  { path: '/map', component: LoginWall, props: { protectedComponent: GlobalMap, justBanner: true } },
   { path: '/login', component: Login },
   { path: '/account', component: LoginWall, props: { protectedComponent: Account } },
   { path: '/help', component: Help },
   { path: '/readings', component: LoginWall, props: { protectedComponent: Readings } },
-  { path: '/leaderboard', component: Leaderboard },
+  { path: '/exposure', component: LoginWall, props: { protectedComponent: Exposure } },
+  { path: '/leaderboard', component: LoginWall, props: { protectedComponent: Leaderboard, justBanner: true } },
   { path: '/cleanlocations', component: Cleanspots }
 ]
 

@@ -3,6 +3,7 @@
     <div class="m-5">
       <h1>Well hey there!</h1>
       <h3>Nice to meet you :)</h3>
+      <b-alert v-if="$route.query.needauth" variant="danger" class="mt-4" show>You need to be signed in to do this.</b-alert>
     </div>
     <p>You can use the following methods to sign in or sign up.</p>
     <div id="firebaseui-auth-container"></div>
