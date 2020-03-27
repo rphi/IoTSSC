@@ -235,6 +235,7 @@ exports.addMessage = functions.https.onCall((data, context) => {
     registrationToken: data.registrationToken,
     limit: data.limit,
     // The coordinates field must be a GeoPoint!
-    coordinates: new admin.firestore.GeoPoint(data.lat, data.long)
+    coordinates: new admin.firestore.GeoPoint(data.lat, data.long),
+    auth: data.auth
   }).catch(e=> {throw e});
 });

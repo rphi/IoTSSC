@@ -10,6 +10,8 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.functions.FirebaseFunctions
@@ -35,6 +37,7 @@ class TrackerActivity : AppCompatActivity() {
     private lateinit var firestore: FirebaseFirestore
     private lateinit var token: String
     private lateinit var symbolManager: SymbolManager
+    private var user: FirebaseUser? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +49,7 @@ class TrackerActivity : AppCompatActivity() {
 
         functions = FirebaseFunctions.getInstance()
         firestore = FirebaseFirestore.getInstance()
+        user = FirebaseAuth.getInstance().currentUser
 
         mapView!!.getMapAsync(OnMapReadyCallback { mapboxMap ->
             mapboxMap.setStyle(Style.Builder().fromUri(Style.MAPBOX_STREETS)) {
@@ -74,7 +78,7 @@ class TrackerActivity : AppCompatActivity() {
                             // Get new Instance ID token
                             token = task.result?.token!!
                             firestore.collection("notificationSubscribers")
-                                    .whereEqualTo("d.registrationToken", token)
+                                    .whereEqualTo("d.auth", user?.uid)
                                     .get()
                                     .addOnSuccessListener { documents ->
                                         for (document in documents) {
@@ -82,6 +86,10 @@ class TrackerActivity : AppCompatActivity() {
                                             val p: GeoPoint = document.getGeoPoint("l")!!
 
                                             displayPoint(p.latitude, p.longitude)
+                                            // update reg token if device has changed
+                                            if (document.getString("d.registrationToken") != token) {
+                                                document.reference.update("d.registrationToken", token)
+                                            }
                                         }
                                     }
                                     .addOnFailureListener { exception ->
@@ -195,7 +203,8 @@ class TrackerActivity : AppCompatActivity() {
                 "registrationToken" to token,
                 "limit" to limit,
                 "lat" to point.latitude,
-                "long" to point.longitude
+                "long" to point.longitude,
+                "auth" to user?.uid
         )
 
         functions.getHttpsCallable("addMessage")
