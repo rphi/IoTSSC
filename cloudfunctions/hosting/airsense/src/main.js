@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router';
-import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+import { BootstrapVue } from 'bootstrap-vue'
 
 // CSS
 import 'bootstrap/dist/css/bootstrap.css'
@@ -19,15 +19,14 @@ import Cleanspots from './components/Cleanspots.vue'
 import LoginWall from './components/LoginWall.vue'
 import Welcome from './components/Welcome.vue'
 import Exposure from './components/Exposure.vue'
+import Alerts from './components/Alerts.vue'
 
 Vue.config.productionTip = false
 
 // Install BootstrapVue
 Vue.use(BootstrapVue)
 // Optionally install the BootstrapVue icon components plugin
-Vue.use(IconsPlugin)
-
-//Vue.use(TwitterFeed)
+//Vue.use(IconsPlugin)
 
 Vue.use(VueRouter)
 
@@ -40,6 +39,7 @@ const routes = [
   { path: '/account', component: LoginWall, props: { protectedComponent: Account } },
   { path: '/help', component: Help },
   { path: '/readings', component: LoginWall, props: { protectedComponent: Readings } },
+  { path: '/alerts', component: LoginWall, props: { protectedComponent: Alerts } },
   { path: '/exposure', component: LoginWall, props: { protectedComponent: Exposure } },
   { path: '/leaderboard', component: LoginWall, props: { protectedComponent: Leaderboard, justBanner: true } },
   { path: '/cleanlocations', component: Cleanspots }

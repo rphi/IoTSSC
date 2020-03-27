@@ -6,10 +6,10 @@
       <div class="col">
         <b-card no-body class="mb-3">
           <b-row no-gutters>
-            <b-col md="4" style="background-color: green;" class="d-flex justify-content-center">
-              <div class="p-4 text-center align-self-center" style="color: whitesmoke;">
+            <b-col md="4" class="d-flex justify-content-center" :class="dailyexposure.class">
+              <div class="p-4 text-center align-self-center">
                 <h1>{{dailyexposure.score}}</h1>
-                <h5>Great!</h5>
+                <h5>{{dailyexposure.rating}}</h5>
               </div>
             </b-col>
             <b-col md="8">
@@ -52,7 +52,7 @@
             <b-col md="4" style="background-color: darkorange;" class="d-flex justify-content-center">
               <div class="p-4 text-center align-self-center" style="color: black;">
                 <h5>Subscribed to</h5>
-                <h1>? alerts</h1>
+                <h1>{{numAlerts}} alerts</h1>
               </div>
             </b-col>
             <b-col md="8">
@@ -60,7 +60,7 @@
                 <b-card-text>
                   You can register to recieve push notifications about pollution in places you care about through the app.
                 </b-card-text>
-                <b-button to="/readings">View your alerts -></b-button>
+                <b-button to="/alerts">View your alerts -></b-button>
               </b-card-body>
             </b-col>
           </b-row>
@@ -75,6 +75,33 @@
     </div>
   </div>
 </template>
+
+<style scoped>
+.sensorscore-unknown {
+  background-color: darkgray;
+  color: black;
+}
+
+.sensorscore-good {
+  background-color: green;
+  color: whitesmoke;
+}
+
+.sensorscore-moderate {
+  background-color: orange;
+  color: black;
+}
+
+.sensorscore-bad {
+  background-color: red;
+  color: whitesmoke;
+}
+
+.sensorscore-verybad {
+  background-color: purple;
+  color: whitesmoke;
+}
+</style>
 
 <script>
 import { Timeline } from 'vue-tweet-embed'
@@ -91,10 +118,13 @@ export default {
   data() {
     return {
       dailyexposure: {
-        score: null,
-        basedOn: null,
+        score: "unknown",
+        basedOn: "n/a",
+        class: "sensorscore-unknown",
+        rating: "unknown"
       },
-      lastReading: null
+      lastReading: null,
+      numAlerts: "?"
     }
   },
   methods: {
@@ -105,10 +135,23 @@ export default {
       .get()
       .then(function(doc) {
         var data = doc.data()["d"];
-        self.dailyexposure = {
-          score: data.score.toFixed(3),
-          basedOn: data.basedOn
-        };
+        self.dailyexposure.score = data.score.toFixed(3);
+        self.dailyexposure.basedOn = data.basedOn;
+        
+        var score = self.dailyexposure.score;
+        if (score <= 50) {
+          self.dailyexposure.class = "sensorscore-good";
+          self.dailyexposure.rating = "Good";
+        } else if (score <= 100) {
+          self.dailyexposure.class = "sensorscore-moderate";
+          self.dailyexposure.rating = "Moderate";
+        } else if (score <= 150) {
+          self.dailyexposure.class = "sensorscore-bad";
+          self.dailyexposure.rating = "Bad";
+        } else {
+          self.dailyexposure.class = "sensorscore-verybad";
+          self.dailyexposure.rating = "Very bad";
+        }
       })
       .catch(function(error) {
           console.log("Error getting documents: ", error);
@@ -127,7 +170,8 @@ export default {
           self.lastReading = "Never";
           return
         }
-        var last = new Date(doc.docs[0].data().t.seconds);
+        console.log(doc.docs[0].data());
+        var last = new Date(doc.docs[0].data().t.seconds * 1000);
 
         TimeAgo.addLocale(en);
         const timeAgo = new TimeAgo('en-GB');
@@ -138,11 +182,24 @@ export default {
       .catch(function(error) {
           console.log("Error getting documents: ", error);
       });
+    },
+    setupAlerts() {
+      let self = this;
+      Db.collection("notificationSubscribers")
+      .where("d.auth", "==", this.uid)
+      .get()
+      .then(function(doc) {
+        self.numAlerts = doc.docs.length;
+      })
+      .catch(function(error) {
+          console.log("Error getting documents: ", error);
+      });
     }
   },
   mounted() {
     this.setupExposure();
     this.setupLastReading();
+    this.setupAlerts();
   },
   props: ['uid']
 }
