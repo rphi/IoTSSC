@@ -15,7 +15,7 @@
             <b-col md="8">
               <b-card-body title="Your exposure score">
                 <b-card-text>
-                  This score is calculated based on a rolling average of {{dailyexposure.basedOn}} of your sensors' readings over the past 24 hours.
+                  This score is calculated based on a rolling average of {{dailyexposure.basedOn}} of your sensor's readings.
                 </b-card-text>
                 <b-button-group>
                   <b-button variant="secondary" to="/exposure">View your exposure -></b-button>

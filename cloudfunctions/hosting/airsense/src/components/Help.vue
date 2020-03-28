@@ -39,7 +39,7 @@
             Our app combines the scores from each of the sensor types inside your sensor pack to calculate your scores.
           </p>
           <p>
-            Your <strong>exposure score</strong> is a rolling average of your exposure over the past 24 hours, and is a great
+            Your <strong>exposure score</strong> is a rolling average of your exposure, and is a great
             way to check at a glance how you are doing. From this, we calculate your exposure rating:
           </p>
           <ul>
