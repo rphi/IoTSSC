@@ -53,8 +53,8 @@ function formatDataString(center, boundingbox) {
   var lnglimit = Math.abs(boundingbox._ne.lng-boundingbox._sw.lng)/0.0005
   var latlimit = Math.abs(boundingbox._ne.lat-boundingbox._sw.lat)/0.0005
   var limit = Math.floor(Math.max(lnglimit, latlimit));
-  var dist = Math.ceil(getDistanceFromLatLonInKm(boundingbox._ne.lat, boundingbox._ne.lng, boundingbox._sw.lat, boundingbox._sw.lng));
-  geojsonlink = `https://us-central1-iotssc-aqm.cloudfunctions.net/api/points/?lat=${center.lat}&long=${center.lng}&radius=${dist}&limit=${limit}`;
+  var radius = Math.ceil(getDistanceFromLatLonInKm(boundingbox._ne.lat, boundingbox._ne.lng, boundingbox._sw.lat, boundingbox._sw.lng)/2);
+  geojsonlink = `https://us-central1-iotssc-aqm.cloudfunctions.net/api/points/?lat=${center.lat}&long=${center.lng}&radius=${radius}&limit=${limit}`;
   return geojsonlink;
 }
 

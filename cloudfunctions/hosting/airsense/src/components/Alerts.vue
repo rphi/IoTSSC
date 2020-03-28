@@ -2,7 +2,7 @@
   <div>
     <h1>My alerts</h1>
     <p>You can view and delete alerts you have setup from the app here.</p>
-    <b-table striped hover :busy="busy" :items="alerts">
+    <b-table striped hover :busy="busy" :items="alerts" show-empty>
 
       <template v-slot:table-busy>
         <div class="text-center text-danger my-2">

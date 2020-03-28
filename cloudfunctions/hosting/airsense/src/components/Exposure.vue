@@ -6,7 +6,7 @@
       <canvas id="exposurechart"></canvas>
     </div>
     <b-overlay :show="show" rounded="sm">
-      <b-table striped hover :items="exposure"></b-table>
+      <b-table striped hover :items="exposure" show-empty></b-table>
     </b-overlay>
   </div>
 </template>
@@ -60,6 +60,7 @@ export default {
     })
     .catch(function(error) {
         console.log("Error getting documents: ", error);
+        self.show = false;
     });
   },
   props: ['uid'],

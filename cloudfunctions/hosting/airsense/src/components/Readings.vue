@@ -2,7 +2,7 @@
   <div>
     <h1>My readings</h1>
     <p>View the last {{readings.length}} sensor readings from our API</p>
-    <b-table striped hover :busy="busy" :items="readings">
+    <b-table striped hover :busy="busy" :items="readings" show-empty>
 
       <template v-slot:table-busy>
         <div class="text-center text-danger my-2">
@@ -54,11 +54,13 @@ export default {
           location: d.l
         })
       });
+      console.debug("Rendering table");
       self.busy = false;
       //console.log(self.readings);
     })
     .catch(function(error) {
         console.log("Error getting documents: ", error);
+        return;
     });
   },
   props: ['uid'],
