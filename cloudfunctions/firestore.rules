@@ -2,7 +2,8 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /readings/{reading} {
-      allow create, read: if request.auth.uid == request.resource.data.auth;
+      allow create: if request.auth.uid == request.resource.data.auth;
+      allow read: if request.auth.uid == resource.data.auth;
     }
     match /userscores/{date=**} {
       allow read: if true;
