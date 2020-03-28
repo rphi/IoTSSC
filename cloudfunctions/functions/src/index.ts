@@ -96,7 +96,7 @@ function calculateAQI(latestReading, oldValue, max_based_on = 4) {
 
 function notify_subscribers(point: admin.firestore.GeoPoint, newValue){
   //get all subscribers in 100m with a lower threshold than recorded value
-  const query: GeoQuery = geofirestore.collection('notificationSubscribers').near({ center: point, radius: 100 });
+  const query: GeoQuery = geofirestore.collection('notificationSubscribers').near({ center: point, radius: 0.100 });
 
   // Get query (as Promise)
   query.get().then((value: GeoQuerySnapshot) => {
