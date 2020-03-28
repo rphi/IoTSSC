@@ -1,0 +1,18 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /readings/{reading} {
+      allow write: if request.auth.uid == request.resource.data.auth;
+      allow read: if true;
+    }
+    match /userscores/{date=**} {
+      allow read: if true;
+    }
+    match /notificationSubscribers/{subscription} {
+      allow read, write: if resource.data.d.auth == request.auth.uid
+    }
+    match /userexposure/{uid} {
+      allow read: if uid == request.auth.uid
+    }
+  }
+}

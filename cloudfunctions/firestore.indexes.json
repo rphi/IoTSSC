@@ -1,0 +1,19 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "readings",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "auth",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "t",
+          "order": "DESCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
