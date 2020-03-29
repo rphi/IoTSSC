@@ -1,4 +1,5 @@
-import * as firebase from "firebase/app"
+import firebase from "firebase/app"
+import 'firebase/app'
 
 // setup Firebase
 const firebaseConfig = {
