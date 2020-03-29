@@ -88,7 +88,7 @@ class HomeActivity : AppCompatActivity() {
         val webButton = findViewById<Button>(R.id.webbutton)
         // set on-click listener
         webButton.setOnClickListener {
-            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"))
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://iotssc-aqm.firebaseapp.com"))
             startActivity(browserIntent)
         }
     }
