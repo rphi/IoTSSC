@@ -93,15 +93,14 @@ class Sensor {
         int max_readings = 30;
         int reading = 0;
         float readings = 0;
+        dsensorLed.write(1);
+        ThisThread::sleep_for(100); //wait for board to warm up
         while(reading < max_readings){
-            dsensorLed.write(1);
-            ThisThread::sleep_for(1); //wait for board to warm up
             readings += read_dust();
             reading ++;
-            dsensorLed.write(0);
             ThisThread::sleep_for(100);
         }
-
+        dsensorLed.write(0);
         float avg = readings / max_readings;
         return avg;
         
