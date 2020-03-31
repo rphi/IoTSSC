@@ -109,7 +109,7 @@ class TrackerActivity : AppCompatActivity() {
         // set on-click listener
         alertButton.setOnClickListener {
             firestore.collection("notificationSubscribers")
-                    .whereEqualTo("d.registrationToken", token)
+                    .whereEqualTo("d.auth", user!!.uid)
                     .get()
                     .addOnSuccessListener { documents ->
                         for (document in documents) {
