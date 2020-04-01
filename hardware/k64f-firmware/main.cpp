@@ -1,6 +1,7 @@
 #include "mbed.h"
 #include "MiCS6814_GasSensor.h"
 #include <Adafruit_SGP30.h>
+#include "CPU_Usage.h"
 
 #define        COV_RATIO                       0.2            //ug/mmm / mv
 #define        NO_DUST_VOLTAGE                 400            //mv
@@ -8,6 +9,8 @@
 
 Serial pc(USBTX, USBRX, 9600);
 RawSerial phone(D1, D0, 9600);
+Timer t;     
+CPU_Usage cpu(t, 1); 
 
 AnalogIn   dsensor(A3);
 DigitalOut dsensorLed(D2);
@@ -52,6 +55,7 @@ class Sensor {
     
         while (true)
         {
+            cpu.working();
             if (c == 'r')
             {
                 pc.printf("got r\n");
@@ -65,6 +69,9 @@ class Sensor {
                 c = '\0';  // To avoid execution of this block until a '0' is received again.
                 phone.printf("Hi, I'm the AirSense hardware device.\r\n");
             }
+            cpu.stopped();
+            ThisThread::sleep_for(1000);
+            pc.printf("CPU %i", cpu.update()); 
         }
     }
 
