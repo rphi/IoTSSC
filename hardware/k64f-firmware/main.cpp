@@ -52,15 +52,18 @@ class Sensor {
 
         pc.printf("sensor board ready!\n");
         phone.attach(&onCharReceived);
-    
+
+        cpu.working();
         while (true)
         {
-            cpu.working();
             if (c == 'r')
             {
                 pc.printf("got r\n");
                 c = '\0';  // To avoid execution of this block until a '1' is received again.
                 send_json_data();
+                cpu.stopped();
+                pc.printf("CPU %i", cpu.update()); 
+                cpu.working();
             }
     
             if (c == '?')
@@ -69,9 +72,8 @@ class Sensor {
                 c = '\0';  // To avoid execution of this block until a '0' is received again.
                 phone.printf("Hi, I'm the AirSense hardware device.\r\n");
             }
-            cpu.stopped();
-            ThisThread::sleep_for(1000);
-            pc.printf("CPU %i", cpu.update()); 
+            cpu.delay(1.0);
+            //ThisThread::sleep_for(1000);
         }
     }
 
