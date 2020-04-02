@@ -66,7 +66,8 @@ function startmap(location) {
       container: 'map',
       style: 'mapbox://styles/mapbox/light-v10',
       center: [location.long, location.lat],
-      zoom: 13
+      zoom: 13,
+      minZoom: 10
   });
 
   map.addControl(
