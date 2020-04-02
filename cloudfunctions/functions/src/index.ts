@@ -51,7 +51,7 @@ app.get('/points', async (req, res) => {
   let lat = Number(req.query.lat);
   let long = Number(req.query.long);
   let radius = Number(req.query.radius);
-  let limit = Number(req.query.limit);
+  let limit = Math.min(10000, Number(req.query.limit));
 
   res.set('Access-Control-Allow-Origin', '*');
 
